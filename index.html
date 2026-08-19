@@ -314,8 +314,18 @@
           </div>
 
           <div class="input-group">
-            <label>Senha PIN (4 dígitos)</label>
-            <input type="text" id="aluno-pin" maxlength="4" value="1234" />
+            <label>Senha PIN (8 dígitos) *</label>
+            <input 
+              type="text" 
+              id="aluno-pin" 
+              maxlength="8" 
+              minlength="8" 
+              pattern="\d{8}" 
+              placeholder="12345678" 
+              value="12345678" 
+              oninput="this.value = this.value.replace(/\D/g, '')" 
+              required 
+            />
           </div>
 
           <div style="display: flex; gap: 8px; align-items: flex-end;">
@@ -513,7 +523,7 @@
           <td>${aluno.cpf || '-'}</td>
           <td>${aluno.whatsapp || '-'}</td>
           <td>${aluno.email}</td>
-          <td><code>${aluno.senha_pin || '1234'}</code></td>
+          <td><code>${aluno.senha_pin || '12345678'}</code></td>
           <td>
             <button class="icon-btn" onclick='editarAluno(${JSON.stringify(aluno)})'>✏️</button>
             <button class="icon-btn" onclick="deletarAluno('${aluno.id}', '${aluno.nome}')">🗑️</button>
@@ -536,12 +546,19 @@
     async function salvarAluno(e) {
       e.preventDefault();
       const id = document.getElementById('aluno-id').value;
+      const pinValor = document.getElementById('aluno-pin').value;
+
+      if (pinValor.length !== 8) {
+        document.getElementById('aluno-mensagem').innerHTML = `<div class="alert-error">A Senha PIN precisa ter exatamente 8 dígitos!</div>`;
+        return;
+      }
+
       const payload = {
         nome: document.getElementById('aluno-nome').value.trim(),
         cpf: document.getElementById('aluno-cpf').value.replace(/\D/g, ''),
         whatsapp: document.getElementById('aluno-whatsapp').value.replace(/\D/g, ''),
         email: document.getElementById('aluno-email').value.trim().toLowerCase(),
-        senha_pin: document.getElementById('aluno-pin').value || '1234'
+        senha_pin: pinValor
       };
 
       let error = null;
@@ -567,7 +584,7 @@
       document.getElementById('aluno-cpf').value = aluno.cpf || '';
       document.getElementById('aluno-whatsapp').value = aluno.whatsapp || '';
       document.getElementById('aluno-email').value = aluno.email;
-      document.getElementById('aluno-pin').value = aluno.senha_pin || '1234';
+      document.getElementById('aluno-pin').value = aluno.senha_pin || '12345678';
 
       document.getElementById('form-aluno-titulo').innerText = '✏️ Editar Aluno';
       document.getElementById('btn-salvar-aluno').innerText = 'Atualizar';
@@ -577,7 +594,7 @@
     function limparFormAluno() {
       document.getElementById('aluno-id').value = '';
       document.getElementById('form-aluno').reset();
-      document.getElementById('aluno-pin').value = '1234';
+      document.getElementById('aluno-pin').value = '12345678';
       document.getElementById('form-aluno-titulo').innerText = '➕ Cadastrar Novo Aluno';
       document.getElementById('btn-salvar-aluno').innerText = 'Cadastrar';
       document.getElementById('btn-cancelar-aluno').style.display = 'none';
