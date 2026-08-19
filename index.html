@@ -253,7 +253,7 @@
         <h2 class="title">Painel Administrativo</h2>
         <p class="subtitle">Logado como: <strong>Márcio Oliveira</strong></p>
       </div>
-      <button class="logout-btn" onclick="alert('Sessão encerrada!')">Sair</button>
+      <button class="logout-btn" onclick="fazerLogout()">Sair</button>
     </div>
 
     <hr class="divider" />
@@ -468,6 +468,12 @@
     }
 
     let todosAlunos = [];
+
+    function fazerLogout() {
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.href = window.location.origin + window.location.pathname;
+    }
 
     function trocarAbaAdmin(aba) {
       document.getElementById('admin-menu').style.display = 'none';
