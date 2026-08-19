@@ -1,14 +1,654 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="./favicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Portal do Aluno - MAZZ</title>
-    <script type="module" crossorigin src="/Web-Aluno/assets/index-pDIsHDUG.js"></script>
-    <link rel="stylesheet" crossorigin href="/Web-Aluno/assets/index-BjTIi2W1.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portal do Aluno - MAZZ</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background-color: #0a0d14;
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 950px;
+      background-color: #121721;
+      border-radius: 16px;
+      padding: 28px 24px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+      border: 1px solid #1e2638;
+      transition: all 0.3s ease;
+    }
+
+    .header-dashboard {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: #9ca3af;
+      margin-top: 4px;
+    }
+
+    .logout-btn {
+      padding: 6px 14px;
+      background-color: rgba(239, 68, 68, 0.2);
+      border: 1px solid #ef4444;
+      border-radius: 6px;
+      color: #f87171;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .divider {
+      border: none;
+      height: 1px;
+      background-color: #1e2638;
+      margin: 16px 0;
+    }
+
+    /* GRID MENU PRINCIPAL */
+    .dashboard-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .card-option {
+      background-color: #0a0d14;
+      padding: 28px 16px;
+      border-radius: 12px;
+      border: 1px solid #1e2638;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .card-option:hover {
+      border-color: #3b82f6;
+      transform: translateY(-2px);
+    }
+
+    .card-option .icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    .card-option h3 {
+      font-size: 15px;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+
+    .card-option span {
+      font-size: 13px;
+      color: #3b82f6;
+      font-weight: 500;
+    }
+
+    /* FORMULÁRIOS E TABELAS */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .back-btn {
+      padding: 6px 12px;
+      background-color: #1e2638;
+      border: none;
+      border-radius: 6px;
+      color: #d1d5db;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .form-card {
+      background-color: #0a0d14;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #1e2638;
+      margin-top: 12px;
+    }
+
+    .grid-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 12px;
+      font-weight: 500;
+      color: #d1d5db;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      background-color: #0a0d14;
+      border: 1px solid #1e2638;
+      border-radius: 8px;
+      color: #ffffff;
+      font-size: 13px;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: #3b82f6;
+    }
+
+    .save-btn {
+      width: 100%;
+      padding: 10px 16px;
+      background-color: #22c55e;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .cancel-btn {
+      padding: 10px 12px;
+      background-color: #374151;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+      margin-top: 12px;
+    }
+
+    th {
+      padding: 10px;
+      background-color: #0a0d14;
+      color: #9ca3af;
+      border-bottom: 1px solid #1e2638;
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #1e2638;
+      color: #d1d5db;
+    }
+
+    tr {
+      background-color: #121721;
+    }
+
+    .icon-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      margin-right: 6px;
+    }
+
+    .alert-error {
+      margin-bottom: 16px;
+      padding: 10px;
+      border-radius: 8px;
+      background-color: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .alert-success {
+      margin-bottom: 16px;
+      padding: 10px;
+      border-radius: 8px;
+      background-color: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+      color: #4ade80;
+      font-size: 12px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- HEADER -->
+    <div class="header-dashboard">
+      <div>
+        <h2 class="title">Painel Administrativo</h2>
+        <p class="subtitle">Logado como: <strong>Márcio Oliveira</strong></p>
+      </div>
+      <button class="logout-btn" onclick="alert('Sessão encerrada!')">Sair</button>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- 1. MENU PRINCIPAL DE OPÇÕES -->
+    <div id="admin-menu" class="dashboard-content">
+      <div class="card-option" onclick="trocarAbaAdmin('alunos')">
+        <div class="icon">🎓</div>
+        <h3>Alunos Cadastrados</h3>
+        <span>Gerenciar Registros ➔</span>
+      </div>
+
+      <div class="card-option" onclick="trocarAbaAdmin('cursos')">
+        <div class="icon">📚</div>
+        <h3>Cursos & Notas</h3>
+        <span>Lançar e Editar ➔</span>
+      </div>
+    </div>
+
+    <!-- 2. ABA: GESTÃO DE ALUNOS -->
+    <div id="admin-alunos" style="display: none;">
+      <div class="top-bar">
+        <button class="back-btn" onclick="trocarAbaAdmin('menu')">← Voltar ao Menu</button>
+        <h3 style="color: #fff;">Gestão de Alunos</h3>
+      </div>
+
+      <div class="form-card">
+        <h4 id="form-aluno-titulo" style="color: #3b82f6; margin-bottom: 12px;">➕ Cadastrar Novo Aluno</h4>
+        <div id="aluno-mensagem"></div>
+
+        <form id="form-aluno" onsubmit="salvarAluno(event)" class="grid-form">
+          <input type="hidden" id="aluno-id" />
+          
+          <div class="input-group">
+            <label>Nome Completo *</label>
+            <input type="text" id="aluno-nome" required placeholder="Ex: João da Silva" />
+          </div>
+
+          <div class="input-group">
+            <label>CPF *</label>
+            <input type="text" id="aluno-cpf" required placeholder="000.000.000-00" oninput="mascaraCPF(this)" />
+          </div>
+
+          <div class="input-group">
+            <label>WhatsApp *</label>
+            <input type="text" id="aluno-whatsapp" required placeholder="(00) 00000-0000" oninput="mascaraWhatsApp(this)" />
+          </div>
+
+          <div class="input-group">
+            <label>E-mail *</label>
+            <input type="email" id="aluno-email" required placeholder="aluno@email.com" />
+          </div>
+
+          <div class="input-group">
+            <label>Senha PIN (4 dígitos)</label>
+            <input type="text" id="aluno-pin" maxlength="4" value="1234" />
+          </div>
+
+          <div style="display: flex; gap: 8px; align-items: flex-end;">
+            <button type="submit" id="btn-salvar-aluno" class="save-btn">Cadastrar</button>
+            <button type="button" id="btn-cancelar-aluno" style="display: none;" onclick="limparFormAluno()" class="cancel-btn">Cancelar</button>
+          </div>
+        </form>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <h4 style="color: #fff;">Alunos Registrados (<span id="total-alunos">0</span>)</h4>
+          <input type="text" id="busca-aluno" placeholder="🔍 Buscar por nome, CPF ou e-mail..." oninput="filtrarAlunos()" style="width: 260px;" />
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>CPF</th>
+                <th>WhatsApp</th>
+                <th>E-mail</th>
+                <th>PIN</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-alunos">
+              <!-- Dados inseridos via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. ABA: CURSOS & NOTAS -->
+    <div id="admin-cursos" style="display: none;">
+      <div class="top-bar">
+        <button class="back-btn" onclick="trocarAbaAdmin('menu')">← Voltar ao Menu</button>
+        <h3 style="color: #fff;">Lançar Cursos & Notas</h3>
+      </div>
+
+      <div class="form-card">
+        <label style="font-size: 14px; margin-bottom: 8px; display: block;">Selecione o Aluno:</label>
+        <select id="select-aluno-curso" onchange="carregarCursosDoAluno(this.value)">
+          <option value="">-- Selecione um aluno para gerenciar os cursos --</option>
+        </select>
+      </div>
+
+      <div id="area-cursos-aluno" style="display: none;" class="form-card">
+        <h4 style="color: #3b82f6; margin-bottom: 12px;">➕ Adicionar Novo Curso / Disciplina</h4>
+        <div id="curso-mensagem"></div>
+
+        <form onsubmit="salvarCurso(event)" class="grid-form">
+          <div class="input-group">
+            <label>Nome do Curso / Disciplina *</label>
+            <input type="text" id="curso-nome" required placeholder="Ex: Programação Web" />
+          </div>
+
+          <div class="input-group">
+            <label>Nota 1</label>
+            <input type="number" id="curso-nota1" step="0.1" min="0" max="10" placeholder="0.0" />
+          </div>
+
+          <div class="input-group">
+            <label>Nota 2</label>
+            <input type="number" id="curso-nota2" step="0.1" min="0" max="10" placeholder="0.0" />
+          </div>
+
+          <div class="input-group">
+            <label>Frequência (%)</label>
+            <input type="number" id="curso-frequencia" min="0" max="100" placeholder="100" value="100" />
+          </div>
+
+          <div style="display: flex; align-items: flex-end;">
+            <button type="submit" class="save-btn">Lançar Curso</button>
+          </div>
+        </form>
+
+        <h4 style="color: #fff; margin-top: 24px; margin-bottom: 12px;">Cursos do Aluno</h4>
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Curso</th>
+                <th>Nota 1</th>
+                <th>Nota 2</th>
+                <th>Média</th>
+                <th>Frequência</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-cursos">
+              <!-- Dados inseridos via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // CONEXÃO COM O SUPABASE
+    const SUPABASE_URL = 'https://lnfsgoznyaaaxnjwonda.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxuZnNnb3pneWFhYXhuandvbmRhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyMzQ1NjcsImV4cCI6MjA1NjzgMDE2N30.placeholder'; // Insira sua chave Anon Key do Supabase
+    
+    let supabaseClient = null;
+    if (typeof supabase !== 'undefined') {
+      supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+
+    let todosAlunos = [];
+
+    // NAVEGAÇÃO DE ABAS
+    function trocarAbaAdmin(aba) {
+      document.getElementById('admin-menu').style.display = 'none';
+      document.getElementById('admin-alunos').style.display = 'none';
+      document.getElementById('admin-cursos').style.display = 'none';
+
+      if (aba === 'alunos') {
+        document.getElementById('admin-alunos').style.display = 'block';
+        carregarAlunos();
+      } else if (aba === 'cursos') {
+        document.getElementById('admin-cursos').style.display = 'block';
+        carregarSelectAlunos();
+      } else {
+        document.getElementById('admin-menu').style.display = 'grid';
+      }
+    }
+
+    // MÁSCARAS
+    function mascaraCPF(i) {
+      let v = i.value.replace(/\D/g, '');
+      if (v.length > 11) v = v.slice(0, 11);
+      i.value = v.replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+    }
+
+    function mascaraWhatsApp(i) {
+      let v = i.value.replace(/\D/g, '');
+      if (v.length > 11) v = v.slice(0, 11);
+      i.value = v.replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d)/, '$1-$2');
+    }
+
+    // FUNÇÕES DE ALUNOS
+    async function carregarAlunos() {
+      if (!supabaseClient) return;
+      const { data, error } = await supabaseClient.from('alunos').select('*').order('nome', { ascending: true });
+      if (!error && data) {
+        todosAlunos = data;
+        renderizarTabelaAlunos(todosAlunos);
+      }
+    }
+
+    function renderizarTabelaAlunos(lista) {
+      const tbody = document.getElementById('tabela-alunos');
+      document.getElementById('total-alunos').innerText = lista.length;
+      tbody.innerHTML = '';
+
+      lista.forEach(aluno => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${aluno.nome}</td>
+          <td>${aluno.cpf || '-'}</td>
+          <td>${aluno.whatsapp || '-'}</td>
+          <td>${aluno.email}</td>
+          <td><code>${aluno.senha_pin || '1234'}</code></td>
+          <td>
+            <button class="icon-btn" onclick='editarAluno(${JSON.stringify(aluno)})'>✏️</button>
+            <button class="icon-btn" onclick="deletarAluno('${aluno.id}', '${aluno.nome}')">🗑️</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filtrarAlunos() {
+      const termo = document.getElementById('busca-aluno').value.toLowerCase();
+      const filtrados = todosAlunos.filter(a => 
+        a.nome.toLowerCase().includes(termo) || 
+        (a.cpf && a.cpf.includes(termo)) || 
+        a.email.toLowerCase().includes(termo)
+      );
+      renderizarTabelaAlunos(filtrados);
+    }
+
+    async function salvarAluno(e) {
+      e.preventDefault();
+      const id = document.getElementById('aluno-id').value;
+      const payload = {
+        nome: document.getElementById('aluno-nome').value.trim(),
+        cpf: document.getElementById('aluno-cpf').value.replace(/\D/g, ''),
+        whatsapp: document.getElementById('aluno-whatsapp').value.replace(/\D/g, ''),
+        email: document.getElementById('aluno-email').value.trim().toLowerCase(),
+        senha_pin: document.getElementById('aluno-pin').value || '1234'
+      };
+
+      let error = null;
+      if (id) {
+        ({ error } = await supabaseClient.from('alunos').update(payload).eq('id', id));
+      } else {
+        ({ error } = await supabaseClient.from('alunos').insert([payload]));
+      }
+
+      const msgBox = document.getElementById('aluno-mensagem');
+      if (error) {
+        msgBox.innerHTML = `<div class="alert-error">Erro ao salvar: ${error.message}</div>`;
+      } else {
+        msgBox.innerHTML = `<div class="alert-success">Aluno salvo com sucesso!</div>`;
+        limparFormAluno();
+        carregarAlunos();
+      }
+    }
+
+    function editarAluno(aluno) {
+      document.getElementById('aluno-id').value = aluno.id;
+      document.getElementById('aluno-nome').value = aluno.nome;
+      document.getElementById('aluno-cpf').value = aluno.cpf || '';
+      document.getElementById('aluno-whatsapp').value = aluno.whatsapp || '';
+      document.getElementById('aluno-email').value = aluno.email;
+      document.getElementById('aluno-pin').value = aluno.senha_pin || '1234';
+
+      document.getElementById('form-aluno-titulo').innerText = '✏️ Editar Aluno';
+      document.getElementById('btn-salvar-aluno').innerText = 'Atualizar';
+      document.getElementById('btn-cancelar-aluno').style.display = 'inline-block';
+    }
+
+    function limparFormAluno() {
+      document.getElementById('aluno-id').value = '';
+      document.getElementById('form-aluno').reset();
+      document.getElementById('aluno-pin').value = '1234';
+      document.getElementById('form-aluno-titulo').innerText = '➕ Cadastrar Novo Aluno';
+      document.getElementById('btn-salvar-aluno').innerText = 'Cadastrar';
+      document.getElementById('btn-cancelar-aluno').style.display = 'none';
+      document.getElementById('aluno-mensagem').innerHTML = '';
+    }
+
+    async function deletarAluno(id, nome) {
+      if (!confirm(`Deseja excluir o aluno "${nome}"?`)) return;
+      await supabaseClient.from('alunos').delete().eq('id', id);
+      carregarAlunos();
+    }
+
+    // FUNÇÕES DE CURSOS & NOTAS
+    async function carregarSelectAlunos() {
+      if (!supabaseClient) return;
+      const { data } = await supabaseClient.from('alunos').select('*').order('nome', { ascending: true });
+      const select = document.getElementById('select-aluno-curso');
+      select.innerHTML = '<option value="">-- Selecione um aluno para gerenciar os cursos --</option>';
+
+      if (data) {
+        data.forEach(a => {
+          const opt = document.createElement('option');
+          opt.value = a.id;
+          opt.innerText = `${a.nome} (CPF: ${a.cpf || 'Não informado'})`;
+          select.appendChild(opt);
+        });
+      }
+    }
+
+    async function carregarCursosDoAluno(alunoId) {
+      const area = document.getElementById('area-cursos-aluno');
+      if (!alunoId) {
+        area.style.display = 'none';
+        return;
+      }
+      area.style.display = 'block';
+
+      const { data } = await supabaseClient.from('notas').select('*').eq('aluno_id', alunoId).order('disciplina', { ascending: true });
+      const tbody = document.getElementById('tabela-cursos');
+      tbody.innerHTML = '';
+
+      if (!data || data.length === 0) {
+        tbody.innerHTML = '<tr><td colSpan="7" style="text-align: center;">Nenhum curso cadastrado para este aluno.</td></tr>';
+        return;
+      }
+
+      data.forEach(c => {
+        const tr = document.createElement('tr');
+        const corStatus = c.status === 'Aprovado' ? '#4ade80' : '#f87171';
+        tr.innerHTML = `
+          <td>${c.disciplina}</td>
+          <td>${c.nota1 ?? '-'}</td>
+          <td>${c.nota2 ?? '-'}</td>
+          <td><strong>${c.media ?? '-'}</strong></td>
+          <td>${c.frequencia}%</td>
+          <td style="color: ${corStatus}">${c.status || '-'}</td>
+          <td><button class="icon-btn" onclick="deletarCurso('${c.id}')">🗑️</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function salvarCurso(e) {
+      e.preventDefault();
+      const alunoId = document.getElementById('select-aluno-curso').value;
+      const nomeCurso = document.getElementById('curso-nome').value.trim();
+      const n1 = parseFloat(document.getElementById('curso-nota1').value) || 0;
+      const n2 = parseFloat(document.getElementById('curso-nota2').value) || 0;
+      const freq = parseFloat(document.getElementById('curso-frequencia').value) || 100;
+
+      const media = ((n1 + n2) / 2).toFixed(1);
+      const status = media >= 7 ? 'Aprovado' : media >= 5 ? 'Recuperação' : 'Reprovado';
+
+      const payload = {
+        aluno_id: alunoId,
+        disciplina: nomeCurso,
+        nota1: n1,
+        nota2: n2,
+        media: parseFloat(media),
+        frequencia: freq,
+        status: status
+      };
+
+      const { error } = await supabaseClient.from('notas').insert([payload]);
+      const msgBox = document.getElementById('curso-mensagem');
+
+      if (error) {
+        msgBox.innerHTML = `<div class="alert-error">Erro: ${error.message}</div>`;
+      } else {
+        msgBox.innerHTML = `<div class="alert-success">Curso e nota lançados com sucesso!</div>`;
+        document.getElementById('curso-nome').value = '';
+        document.getElementById('curso-nota1').value = '';
+        document.getElementById('curso-nota2').value = '';
+        document.getElementById('curso-frequencia').value = '100';
+        carregarCursosDoAluno(alunoId);
+      }
+    }
+
+    async function deletarCurso(cursoId) {
+      if (!confirm('Deseja excluir este curso?')) return;
+      await supabaseClient.from('notas').delete().eq('id', cursoId);
+      const alunoId = document.getElementById('select-aluno-curso').value;
+      carregarCursosDoAluno(alunoId);
+    }
+  </script>
+</body>
 </html>
