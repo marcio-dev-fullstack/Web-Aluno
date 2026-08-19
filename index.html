@@ -34,6 +34,12 @@
       transition: all 0.3s ease;
     }
 
+    .login-container {
+      max-width: 400px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
     .header-dashboard {
       display: flex;
       justify-content: space-between;
@@ -60,6 +66,12 @@
       color: #f87171;
       font-size: 12px;
       cursor: pointer;
+      font-weight: 600;
+    }
+
+    .logout-btn:hover {
+      background-color: #ef4444;
+      color: #ffffff;
     }
 
     .divider {
@@ -143,6 +155,7 @@
       display: flex;
       flex-direction: column;
       gap: 6px;
+      text-align: left;
     }
 
     label {
@@ -169,13 +182,18 @@
     .save-btn {
       width: 100%;
       padding: 10px 16px;
-      background-color: #22c55e;
+      background-color: #3b82f6;
       border: none;
       border-radius: 8px;
       color: #fff;
       font-size: 13px;
       font-weight: 600;
       cursor: pointer;
+      margin-top: 12px;
+    }
+
+    .save-btn:hover {
+      background-color: #2563eb;
     }
 
     .cancel-btn {
@@ -248,212 +266,239 @@
 
   <div class="container">
     
-    <div class="header-dashboard">
-      <div>
-        <h2 class="title">Painel Administrativo</h2>
-        <p class="subtitle">Logado como: <strong>Márcio Oliveira</strong></p>
-      </div>
-      <button class="logout-btn" onclick="fazerLogout()">Sair</button>
-    </div>
+    <!-- TELA DE LOGIN -->
+    <div id="tela-login" class="login-container">
+      <h2 class="title" style="margin-bottom: 8px;">Portal MAZZ</h2>
+      <p class="subtitle" style="margin-bottom: 24px;">Informe suas credenciais para acessar o painel</p>
+      
+      <div id="login-mensagem"></div>
 
-    <hr class="divider" />
-
-    <!-- MENU PRINCIPAL -->
-    <div id="admin-menu" class="dashboard-content">
-      <div class="card-option" onclick="trocarAbaAdmin('alunos')">
-        <div class="icon">🎓</div>
-        <h3>Alunos Cadastrados</h3>
-        <span>Gerenciar Registros ➔</span>
-      </div>
-
-      <div class="card-option" onclick="trocarAbaAdmin('cursos')">
-        <div class="icon">📚</div>
-        <h3>Matricular Aluno em Curso</h3>
-        <span>Lançar e Editar ➔</span>
-      </div>
-
-      <div class="card-option" onclick="trocarAbaAdmin('gerenciar-cursos')">
-        <div class="icon">⚙️</div>
-        <h3>Cadastro de Cursos</h3>
-        <span>Criar Novos Cursos ➔</span>
-      </div>
-    </div>
-
-    <!-- ABA 1: GESTÃO DE ALUNOS -->
-    <div id="admin-alunos" style="display: none;">
-      <div class="top-bar">
-        <button class="back-btn" onclick="trocarAbaAdmin('menu')">← Voltar ao Menu</button>
-        <h3 style="color: #fff;">Gestão de Alunos</h3>
-      </div>
-
-      <div class="form-card">
-        <h4 id="form-aluno-titulo" style="color: #3b82f6; margin-bottom: 12px;">➕ Cadastrar Novo Aluno</h4>
-        <div id="aluno-mensagem"></div>
-
-        <form id="form-aluno" onsubmit="salvarAluno(event)" class="grid-form">
-          <input type="hidden" id="aluno-id" />
-          
-          <div class="input-group">
-            <label>Nome Completo *</label>
-            <input type="text" id="aluno-nome" required placeholder="Ex: João da Silva" />
-          </div>
-
-          <div class="input-group">
-            <label>CPF *</label>
-            <input type="text" id="aluno-cpf" required placeholder="000.000.000-00" oninput="mascaraCPF(this)" />
-          </div>
-
-          <div class="input-group">
-            <label>WhatsApp *</label>
-            <input type="text" id="aluno-whatsapp" required placeholder="(00) 00000-0000" oninput="mascaraWhatsApp(this)" />
-          </div>
-
-          <div class="input-group">
-            <label>E-mail *</label>
-            <input type="email" id="aluno-email" required placeholder="aluno@email.com" />
-          </div>
-
-          <div class="input-group">
-            <label>Senha PIN (8 dígitos) *</label>
-            <input 
-              type="text" 
-              id="aluno-pin" 
-              maxlength="8" 
-              minlength="8" 
-              pattern="\d{8}" 
-              placeholder="12345678" 
-              value="12345678" 
-              oninput="this.value = this.value.replace(/\D/g, '')" 
-              required 
-            />
-          </div>
-
-          <div style="display: flex; gap: 8px; align-items: flex-end;">
-            <button type="submit" id="btn-salvar-aluno" class="save-btn">Cadastrar</button>
-            <button type="button" id="btn-cancelar-aluno" style="display: none;" onclick="limparFormAluno()" class="cancel-btn">Cancelar</button>
-          </div>
-        </form>
-      </div>
-
-      <div style="margin-top: 20px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-          <h4 style="color: #fff;">Alunos Registrados (<span id="total-alunos">0</span>)</h4>
-          <input type="text" id="busca-aluno" placeholder="🔍 Buscar por nome, CPF ou e-mail..." oninput="filtrarAlunos()" style="width: 260px;" />
+      <form onsubmit="fazerLogin(event)">
+        <div class="input-group" style="margin-bottom: 12px;">
+          <label>E-mail / Usuário</label>
+          <input type="text" id="login-usuario" required placeholder="Digite seu e-mail" value="marcio@email.com" />
         </div>
 
-        <div style="overflow-x: auto;">
+        <div class="input-group" style="margin-bottom: 16px;">
+          <label>Senha</label>
+          <input type="password" id="login-senha" required placeholder="Digite sua senha" value="123456" />
+        </div>
+
+        <button type="submit" class="save-btn">Entrar no Painel</button>
+      </form>
+    </div>
+
+    <!-- TELA PAINEL ADMINISTRATIVO -->
+    <div id="painel-admin" style="display: none;">
+      
+      <div class="header-dashboard">
+        <div>
+          <h2 class="title">Painel Administrativo</h2>
+          <p class="subtitle">Logado como: <strong id="usuario-logado-nome">Márcio Oliveira</strong></p>
+        </div>
+        <button class="logout-btn" onclick="fazerLogout()">Sair</button>
+      </div>
+
+      <hr class="divider" />
+
+      <!-- MENU PRINCIPAL DO PAINEL -->
+      <div id="admin-menu" class="dashboard-content">
+        <div class="card-option" onclick="trocarAbaAdmin('alunos')">
+          <div class="icon">🎓</div>
+          <h3>Alunos Cadastrados</h3>
+          <span>Gerenciar Registros ➔</span>
+        </div>
+
+        <div class="card-option" onclick="trocarAbaAdmin('cursos')">
+          <div class="icon">📚</div>
+          <h3>Matricular Aluno em Curso</h3>
+          <span>Lançar e Editar ➔</span>
+        </div>
+
+        <div class="card-option" onclick="trocarAbaAdmin('gerenciar-cursos')">
+          <div class="icon">⚙️</div>
+          <h3>Cadastro de Cursos</h3>
+          <span>Criar Novos Cursos ➔</span>
+        </div>
+      </div>
+
+      <!-- ABA 1: GESTÃO DE ALUNOS -->
+      <div id="admin-alunos" style="display: none;">
+        <div class="top-bar">
+          <button class="back-btn" onclick="trocarAbaAdmin('menu')">← Voltar ao Menu</button>
+          <h3 style="color: #fff;">Gestão de Alunos</h3>
+        </div>
+
+        <div class="form-card">
+          <h4 id="form-aluno-titulo" style="color: #3b82f6; margin-bottom: 12px;">➕ Cadastrar Novo Aluno</h4>
+          <div id="aluno-mensagem"></div>
+
+          <form id="form-aluno" onsubmit="salvarAluno(event)" class="grid-form">
+            <input type="hidden" id="aluno-id" />
+            
+            <div class="input-group">
+              <label>Nome Completo *</label>
+              <input type="text" id="aluno-nome" required placeholder="Ex: João da Silva" />
+            </div>
+
+            <div class="input-group">
+              <label>CPF *</label>
+              <input type="text" id="aluno-cpf" required placeholder="000.000.000-00" oninput="mascaraCPF(this)" />
+            </div>
+
+            <div class="input-group">
+              <label>WhatsApp *</label>
+              <input type="text" id="aluno-whatsapp" required placeholder="(00) 00000-0000" oninput="mascaraWhatsApp(this)" />
+            </div>
+
+            <div class="input-group">
+              <label>E-mail *</label>
+              <input type="email" id="aluno-email" required placeholder="aluno@email.com" />
+            </div>
+
+            <div class="input-group">
+              <label>Senha PIN (8 dígitos) *</label>
+              <input 
+                type="text" 
+                id="aluno-pin" 
+                maxlength="8" 
+                minlength="8" 
+                pattern="\d{8}" 
+                placeholder="12345678" 
+                value="12345678" 
+                oninput="this.value = this.value.replace(/\D/g, '')" 
+                required 
+              />
+            </div>
+
+            <div style="display: flex; gap: 8px; align-items: flex-end;">
+              <button type="submit" id="btn-salvar-aluno" class="save-btn" style="background-color: #22c55e;">Cadastrar</button>
+              <button type="button" id="btn-cancelar-aluno" style="display: none;" onclick="limparFormAluno()" class="cancel-btn">Cancelar</button>
+            </div>
+          </form>
+        </div>
+
+        <div style="margin-top: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h4 style="color: #fff;">Alunos Registrados (<span id="total-alunos">0</span>)</h4>
+            <input type="text" id="busca-aluno" placeholder="🔍 Buscar por nome, CPF ou e-mail..." oninput="filtrarAlunos()" style="width: 260px;" />
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>CPF</th>
+                  <th>WhatsApp</th>
+                  <th>E-mail</th>
+                  <th>PIN</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="tabela-alunos"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABA 2: MATRICULAR ALUNO EM CURSO -->
+      <div id="admin-cursos" style="display: none;">
+        <div class="top-bar">
+          <button class="back-btn" onclick="trocarAbaAdmin('menu')">← Voltar ao Menu</button>
+          <h3 style="color: #fff;">Lançar Cursos & Notas</h3>
+        </div>
+
+        <div class="form-card">
+          <label style="font-size: 14px; margin-bottom: 8px; display: block;">Selecione o Aluno:</label>
+          <select id="select-aluno-curso" onchange="carregarCursosDoAluno(this.value)">
+            <option value="">-- Selecione um aluno para gerenciar os cursos --</option>
+          </select>
+        </div>
+
+        <div id="area-cursos-aluno" style="display: none;" class="form-card">
+          <h4 style="color: #3b82f6; margin-bottom: 12px;">➕ Matricular Aluno em um Curso</h4>
+          <div id="curso-mensagem"></div>
+
+          <form onsubmit="salvarMatricula(event)" class="grid-form">
+            <div class="input-group">
+              <label>Selecione o Curso *</label>
+              <select id="select-curso-disponivel" required>
+                <option value="">-- Selecione o curso --</option>
+              </select>
+            </div>
+
+            <div class="input-group">
+              <label>Nota 1</label>
+              <input type="number" id="curso-nota1" step="0.1" min="0" max="10" placeholder="0.0" />
+            </div>
+
+            <div class="input-group">
+              <label>Nota 2</label>
+              <input type="number" id="curso-nota2" step="0.1" min="0" max="10" placeholder="0.0" />
+            </div>
+
+            <div class="input-group">
+              <label>Frequência (%)</label>
+              <input type="number" id="curso-frequencia" min="0" max="100" placeholder="100" value="100" />
+            </div>
+
+            <div style="display: flex; align-items: flex-end;">
+              <button type="submit" class="save-btn" style="background-color: #22c55e;">Matricular Aluno</button>
+            </div>
+          </form>
+
+          <h4 style="color: #fff; margin-top: 24px; margin-bottom: 12px;">Cursos do Aluno</h4>
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Curso</th>
+                  <th>Nota 1</th>
+                  <th>Nota 2</th>
+                  <th>Média</th>
+                  <th>Frequência</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="tabela-cursos"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABA 3: CADASTRO DE CURSOS NO SISTEMA -->
+      <div id="admin-gerenciar-cursos" style="display: none;">
+        <div class="top-bar">
+          <button class="back-btn" onclick="trocarAbaAdmin('menu')">← Voltar ao Menu</button>
+          <h3 style="color: #fff;">Cadastrar Cursos no Sistema</h3>
+        </div>
+
+        <div class="form-card">
+          <h4 style="color: #3b82f6; margin-bottom: 12px;">➕ Cadastrar Novo Curso Geral</h4>
+          <div id="gerenciador-curso-mensagem"></div>
+
+          <form onsubmit="cadastrarNovoCursoGeral(event)" style="display: flex; gap: 12px;">
+            <input type="text" id="novo-curso-nome" required placeholder="Ex: Ciência de Dados" style="flex: 1;" />
+            <button type="submit" class="save-btn" style="width: auto; background-color: #22c55e; margin-top: 0;">Cadastrar Curso</button>
+          </form>
+        </div>
+
+        <div class="form-card" style="margin-top: 16px;">
+          <h4 style="color: #fff; margin-bottom: 12px;">Cursos Cadastrados no Sistema</h4>
           <table>
             <thead>
               <tr>
-                <th>Nome</th>
-                <th>CPF</th>
-                <th>WhatsApp</th>
-                <th>E-mail</th>
-                <th>PIN</th>
-                <th>Ações</th>
+                <th>Nome do Curso</th>
+                <th>Ação</th>
               </tr>
             </thead>
-            <tbody id="tabela-alunos"></tbody>
+            <tbody id="tabela-cursos-gerais"></tbody>
           </table>
         </div>
       </div>
-    </div>
 
-    <!-- ABA 2: MATRICULAR ALUNO EM CURSO -->
-    <div id="admin-cursos" style="display: none;">
-      <div class="top-bar">
-        <button class="back-btn" onclick="trocarAbaAdmin('menu')">← Voltar ao Menu</button>
-        <h3 style="color: #fff;">Lançar Cursos & Notas</h3>
-      </div>
-
-      <div class="form-card">
-        <label style="font-size: 14px; margin-bottom: 8px; display: block;">Selecione o Aluno:</label>
-        <select id="select-aluno-curso" onchange="carregarCursosDoAluno(this.value)">
-          <option value="">-- Selecione um aluno para gerenciar os cursos --</option>
-        </select>
-      </div>
-
-      <div id="area-cursos-aluno" style="display: none;" class="form-card">
-        <h4 style="color: #3b82f6; margin-bottom: 12px;">➕ Matricular Aluno em um Curso</h4>
-        <div id="curso-mensagem"></div>
-
-        <form onsubmit="salvarMatricula(event)" class="grid-form">
-          <div class="input-group">
-            <label>Selecione o Curso *</label>
-            <select id="select-curso-disponivel" required>
-              <option value="">-- Selecione o curso --</option>
-            </select>
-          </div>
-
-          <div class="input-group">
-            <label>Nota 1</label>
-            <input type="number" id="curso-nota1" step="0.1" min="0" max="10" placeholder="0.0" />
-          </div>
-
-          <div class="input-group">
-            <label>Nota 2</label>
-            <input type="number" id="curso-nota2" step="0.1" min="0" max="10" placeholder="0.0" />
-          </div>
-
-          <div class="input-group">
-            <label>Frequência (%)</label>
-            <input type="number" id="curso-frequencia" min="0" max="100" placeholder="100" value="100" />
-          </div>
-
-          <div style="display: flex; align-items: flex-end;">
-            <button type="submit" class="save-btn">Matricular Aluno</button>
-          </div>
-        </form>
-
-        <h4 style="color: #fff; margin-top: 24px; margin-bottom: 12px;">Cursos do Aluno</h4>
-        <div style="overflow-x: auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>Curso</th>
-                <th>Nota 1</th>
-                <th>Nota 2</th>
-                <th>Média</th>
-                <th>Frequência</th>
-                <th>Status</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody id="tabela-cursos"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ABA 3: CADASTRO DE CURSOS NO SISTEMA -->
-    <div id="admin-gerenciar-cursos" style="display: none;">
-      <div class="top-bar">
-        <button class="back-btn" onclick="trocarAbaAdmin('menu')">← Voltar ao Menu</button>
-        <h3 style="color: #fff;">Cadastrar Cursos no Sistema</h3>
-      </div>
-
-      <div class="form-card">
-        <h4 style="color: #3b82f6; margin-bottom: 12px;">➕ Cadastrar Novo Curso Geral</h4>
-        <div id="gerenciador-curso-mensagem"></div>
-
-        <form onsubmit="cadastrarNovoCursoGeral(event)" style="display: flex; gap: 12px;">
-          <input type="text" id="novo-curso-nome" required placeholder="Ex: Ciência de Dados" style="flex: 1;" />
-          <button type="submit" class="save-btn" style="width: auto;">Cadastrar Curso</button>
-        </form>
-      </div>
-
-      <div class="form-card" style="margin-top: 16px;">
-        <h4 style="color: #fff; margin-bottom: 12px;">Cursos Cadastrados no Sistema</h4>
-        <table>
-          <thead>
-            <tr>
-              <th>Nome do Curso</th>
-              <th>Ação</th>
-            </tr>
-          </thead>
-          <tbody id="tabela-cursos-gerais"></tbody>
-        </table>
-      </div>
     </div>
 
   </div>
@@ -469,10 +514,40 @@
 
     let todosAlunos = [];
 
-    function fazerLogout() {
+    // VERIFICA LOGIN AO CARREGAR A PÁGINA
+    window.addEventListener('DOMContentLoaded', () => {
+      const estaLogado = localStorage.getItem('usuario_logado');
+      if (estaLogado === 'true') {
+        document.getElementById('tela-login').style.display = 'none';
+        document.getElementById('painel-admin').style.display = 'block';
+      } else {
+        document.getElementById('tela-login').style.display = 'block';
+        document.getElementById('painel-admin').style.display = 'none';
+      }
+    });
+
+    // FUNÇÃO DE LOGIN
+    function fazerLogin(e) {
+      e.preventDefault();
+      localStorage.setItem('usuario_logado', 'true');
+      document.getElementById('tela-login').style.display = 'none';
+      document.getElementById('painel-admin').style.display = 'block';
+      trocarAbaAdmin('menu');
+    }
+
+    // FUNÇÃO DE LOGOUT
+    async function fazerLogout() {
+      if (supabaseClient && supabaseClient.auth) {
+        await supabaseClient.auth.signOut();
+      }
       localStorage.clear();
       sessionStorage.clear();
-      window.location.href = window.location.origin + window.location.pathname;
+      
+      document.getElementById('painel-admin').style.display = 'none';
+      document.getElementById('tela-login').style.display = 'block';
+      
+      const formLogin = document.querySelector('#tela-login form');
+      if (formLogin) formLogin.reset();
     }
 
     function trocarAbaAdmin(aba) {
