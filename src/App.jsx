@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
-import './App.css';
+import './index.css';
 
 export default function App() {
   const [route, setRoute] = useState(window.location.hash || '#/');
