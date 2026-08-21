@@ -606,14 +606,15 @@ chore: atualiza dependências
 
 **Márcio Rodrigues de Oliveira**
 
-- 🎓 Analista de Sistemas
-- 💻 Desenvolvedor Full Stack
+- 🎓 Analista de Sistemas & Dev Fullstack
 - 📚 Professor Conteudista
+- 📱 **WhatsApp:** (65) 99610-8749
+- ✉️ **E-mail:** atendimento.mgrupo@gmail.com
 
 ### 🔗 Links
 
-- **GitHub:** https://github.com/marcio-dev-fullstack
-- **Portatl:** https://mgrupo.online
+- **GitHub:** <a href="https://github.com/marcio-dev-fullstack" target="_blank" rel="noopener noreferrer">https://github.com/marcio-dev-fullstack</a>
+- **Portal:** <a href="https://mgrupo.online" target="_blank" rel="noopener noreferrer">https://mgrupo.online</a>
 
 ---
 
