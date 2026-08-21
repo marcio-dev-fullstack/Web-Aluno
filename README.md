@@ -27,7 +27,7 @@
 
 ## 📌 Sobre o Projeto
 
-O **Web-Aluno** é a aplicação web frontend que compõe o ecossistema de Ensino a Distância (EAD) do grupo **MAZZ**.
+O **Web-Aluno** é a aplicação web frontend que compõe o ecossistema de Ensino a Distância (EAD) do grupo **MGRUPO**.
 
 A aplicação foi desenvolvida com foco em **usabilidade, responsividade, desempenho, organização de código e experiência do usuário (UX)**, oferecendo aos estudantes um ambiente centralizado para acompanhamento da jornada acadêmica.
 
