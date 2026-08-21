@@ -606,21 +606,20 @@ chore: atualiza dependências
 
 **Márcio Rodrigues de Oliveira**
 
-- 💻 Desenvolvedor Full Stack
 - 🎓 Analista de Sistemas
-- 🏗️ Engenheiro Civil
+- 💻 Desenvolvedor Full Stack
 - 📚 Professor Conteudista
 
 ### 🔗 Links
 
 - **GitHub:** https://github.com/marcio-dev-fullstack
-- **Repositório:** https://github.com/marcio-dev-fullstack/Web-Aluno
+- **Portatl:** https://mgrupo.online
 
 ---
 
 ## 📄 Licença
 
-Este projeto é de uso **exclusivo e privado** para o ecossistema da plataforma **MAZZ**.
+Este projeto é de uso **exclusivo e privado** para o ecossistema da plataforma **MGRUPO**.
 
 Todos os direitos reservados.
 
@@ -628,11 +627,11 @@ A utilização, cópia, redistribuição ou modificação do código deve ocorre
 
 ---
 
-## 🏢 MAZZ
+## 🏢 MGRUPO
 
 O **Web-Aluno** integra o ecossistema de soluções digitais voltadas à educação e ao Ensino a Distância.
 
-**MAZZ — Educação, Tecnologia e Conhecimento.**
+**MGRUPO — Educação, Tecnologia e Conhecimento.**
 
 ---
 
