@@ -1,8 +1,8 @@
 import React, { useRef } from 'react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import assinaturaImg from './Marcio.png'; // Importação da imagem da assinatura
 
-// Estilos extraídos do seu projeto
 const certStyles = {
   container: {
     padding: '20px',
@@ -33,19 +33,26 @@ const certStyles = {
     display: 'flex', 
     justifyContent: 'space-around', 
     width: '100%', 
-    marginTop: '20px' 
+    marginTop: '20px',
+    alignItems: 'flex-end'
   },
   assinatura: { 
     display: 'flex', 
     flexDirection: 'column', 
     alignItems: 'center', 
     fontSize: '12px',
-    color: '#000000'
+    color: '#000000',
+    position: 'relative'
   },
   tracoAssinatura: { 
     width: '200px', 
     borderTop: '1px solid #000000', 
     marginBottom: '4px' 
+  },
+  imagemAssinatura: {
+    height: '50px',
+    marginBottom: '-15px',
+    zIndex: 1
   }
 };
 
@@ -162,19 +169,30 @@ export default function App() {
 
             <br />
 
-            {/* Rodapé com Linhas de Assinatura e Emissão */}
+            {/* Rodapé com Assinatura em Imagem e Dados */}
             <div style={certStyles.linhaAssinatura}>
+              
+              {/* Lado Esquerdo - Direção Geral com Imagem da Assinatura */}
               <div style={certStyles.assinatura}>
+                <img 
+                  src={assinaturaImg} 
+                  alt="Assinatura Márcio R. de Oliveira" 
+                  style={certStyles.imagemAssinatura} 
+                />
                 <div style={certStyles.tracoAssinatura}></div>
-                <div>Direção Pedagogica</div>
-                <strong>MAZZ T.I e Capacitação</strong>
+                <div>Direção Geral</div>
+                <strong>MAZZ CURSOS</strong>
+                <span style={{ fontSize: '10px', color: '#475569' }}>CNPJ: 68.664.946/0001-96</span>
               </div>
 
+              {/* Lado Direito - Data de Emissão */}
               <div style={certStyles.assinatura}>
+                <div style={{ height: '50px' }}></div> {/* Espaçador para alinhar com o lado esquerdo */}
                 <div style={certStyles.tracoAssinatura}></div>
                 <div>Data de Emissão</div>
                 <strong>22 de agosto de 2026</strong>
               </div>
+
             </div>
 
           </div>
