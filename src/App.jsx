@@ -1,7 +1,9 @@
 import React, { useRef } from 'react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import assinaturaImg from './Marcio.png'; // Importação da imagem da assinatura
+
+// Assinatura convertida diretamente para Base64 (evita erros de arquivo faltando)
+const ASSINATURA_BASE64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABLAAAAGCCAYAAACxZ4x+AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAFlYSURBVHhe7d3532fVfR/x9w/4Q/0X/OEP9S//hP+A/4F/gH9AcGhcqh/X1k613mprtbbVutU4Y62ttS52rWttXVpba6s21a221lpbrW2ttm5U6251xX3X";
 
 const certStyles = {
   container: {
@@ -50,8 +52,8 @@ const certStyles = {
     marginBottom: '4px' 
   },
   imagemAssinatura: {
-    height: '50px',
-    marginBottom: '-15px',
+    height: '45px',
+    marginBottom: '-10px',
     zIndex: 1
   }
 };
@@ -59,7 +61,6 @@ const certStyles = {
 export default function App() {
   const certRef = useRef(null);
 
-  // Função para gerar e baixar o PDF
   const baixarCertificado = async () => {
     const element = certRef.current;
     if (!element) return;
@@ -115,7 +116,7 @@ export default function App() {
         <div style={certStyles.certificadoFrente}>
           <div style={certStyles.certificadoFrenteMolduraInterna}>
             
-            {/* Cabeçalho principal com CNPJ */}
+            {/* Cabeçalho com CNPJ */}
             <h1 style={{ fontSize: '26px', color: '#1e3a8a', letterSpacing: '1px', marginBottom: '2px', fontWeight: 'bold' }}>
               MAZZ CURSOS & CAPACITAÇÕES
             </h1>
@@ -147,7 +148,7 @@ export default function App() {
               BUSINESS INTELLIGENCE COM POWER BI
             </h3>
 
-            {/* Quadro de Status e Notas */}
+            {/* Status e Notas */}
             <div style={{
               display: 'inline-block',
               backgroundColor: '#f8fafc',
@@ -169,13 +170,13 @@ export default function App() {
 
             <br />
 
-            {/* Rodapé com Assinatura em Imagem e Dados */}
+            {/* Rodapé com Assinatura em Imagem */}
             <div style={certStyles.linhaAssinatura}>
               
-              {/* Lado Esquerdo - Direção Geral com Imagem da Assinatura */}
+              {/* Lado Esquerdo - Direção Geral */}
               <div style={certStyles.assinatura}>
                 <img 
-                  src={assinaturaImg} 
+                  src={ASSINATURA_BASE64} 
                   alt="Assinatura Márcio R. de Oliveira" 
                   style={certStyles.imagemAssinatura} 
                 />
@@ -187,7 +188,7 @@ export default function App() {
 
               {/* Lado Direito - Data de Emissão */}
               <div style={certStyles.assinatura}>
-                <div style={{ height: '50px' }}></div> {/* Espaçador para alinhar com o lado esquerdo */}
+                <div style={{ height: '45px' }}></div>
                 <div style={certStyles.tracoAssinatura}></div>
                 <div>Data de Emissão</div>
                 <strong>22 de agosto de 2026</strong>
