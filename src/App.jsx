@@ -2,12 +2,12 @@ import React, { useRef } from 'react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
-// Estilos extraídos e adaptados a partir da estrutura do seu VS Code
+// Estilos extraídos do seu projeto
 const certStyles = {
   container: {
     padding: '20px',
     backgroundColor: '#ffffff',
-    fontFamily: 'sans-serif',
+    fontFamily: 'serif',
     width: '900px',
     margin: '0 auto',
     boxSizing: 'border-box'
@@ -18,7 +18,7 @@ const certStyles = {
     boxSizing: 'border-box'
   },
   certificadoFrenteMolduraInterna: {
-    border: '1px solid #cbd5e1',
+    border: '1px solid #c2410c',
     padding: '30px 20px',
     textAlign: 'center',
     boxSizing: 'border-box'
@@ -26,14 +26,14 @@ const certStyles = {
   localData: { 
     fontSize: '14px', 
     fontWeight: 'bold', 
-    margin: '10px 0',
+    margin: '15px 0',
     color: '#000000'
   },
   linhaAssinatura: { 
     display: 'flex', 
     justifyContent: 'space-around', 
     width: '100%', 
-    marginTop: '10px' 
+    marginTop: '20px' 
   },
   assinatura: { 
     display: 'flex', 
@@ -46,41 +46,13 @@ const certStyles = {
     width: '200px', 
     borderTop: '1px solid #000000', 
     marginBottom: '4px' 
-  },
-  tituloVerso: { 
-    fontSize: '20px', 
-    color: '#1e3a8a', 
-    margin: '10px 0',
-    textAlign: 'center'
-  },
-  tabelaVerso: { 
-    width: '90%', 
-    borderCollapse: 'collapse', 
-    marginTop: '20px',
-    marginLeft: 'auto',
-    marginRight: 'auto'
-  },
-  thVerso: { 
-    border: '1px solid #000000', 
-    padding: '8px', 
-    backgroundColor: '#f1f5f9', 
-    fontSize: '12px',
-    color: '#000000',
-    fontWeight: 'bold'
-  },
-  tdVerso: { 
-    border: '1px solid #000000', 
-    padding: '8px', 
-    fontSize: '12px', 
-    textAlign: 'center',
-    color: '#000000'
   }
 };
 
 export default function App() {
   const certRef = useRef(null);
 
-  // Função para gerar o PDF em alta definição
+  // Função para gerar e baixar o PDF
   const baixarCertificado = async () => {
     const element = certRef.current;
     if (!element) return;
@@ -129,18 +101,22 @@ export default function App() {
         </button>
       </div>
 
-      {/* Conteúdo do Certificado (Ref capturada pelo HTML2Canvas) */}
+      {/* Conteúdo do Certificado */}
       <div ref={certRef} style={certStyles.container}>
         
         {/* FRENTE DO CERTIFICADO */}
         <div style={certStyles.certificadoFrente}>
           <div style={certStyles.certificadoFrenteMolduraInterna}>
             
-            <h1 style={{ fontSize: '26px', color: '#1e3a8a', letterSpacing: '1px', marginBottom: '10px' }}>
+            {/* Cabeçalho principal com CNPJ */}
+            <h1 style={{ fontSize: '26px', color: '#1e3a8a', letterSpacing: '1px', marginBottom: '2px', fontWeight: 'bold' }}>
               MAZZ CURSOS & CAPACITAÇÕES
             </h1>
+            <div style={{ fontSize: '11px', color: '#334155', fontWeight: 'bold', marginBottom: '20px' }}>
+              CNPJ: 68.664.946/0001-96
+            </div>
 
-            <h3 style={{ color: '#c2410c', textTransform: 'uppercase', fontSize: '18px', marginBottom: '25px' }}>
+            <h3 style={{ color: '#c2410c', textTransform: 'uppercase', fontSize: '18px', marginBottom: '25px', fontWeight: 'bold' }}>
               CERTIFICADO DE CONCLUSÃO
             </h3>
 
@@ -160,11 +136,11 @@ export default function App() {
               concluiu com êxito o curso de capacitação profissional em:
             </p>
 
-            <h3 style={{ fontSize: '22px', color: '#1e3a8a', textTransform: 'uppercase', marginBottom: '25px' }}>
-              DESENVOLVIMENTO DE APIS RESTFUL
+            <h3 style={{ fontSize: '22px', color: '#1e3a8a', textTransform: 'uppercase', marginBottom: '25px', fontWeight: 'bold' }}>
+              BUSINESS INTELLIGENCE COM POWER BI
             </h3>
 
-            {/* Caixinha com Notas/Status */}
+            {/* Quadro de Status e Notas */}
             <div style={{
               display: 'inline-block',
               backgroundColor: '#f8fafc',
@@ -172,7 +148,7 @@ export default function App() {
               padding: '8px 20px',
               borderRadius: '6px',
               fontSize: '12px',
-              marginBottom: '25px',
+              marginBottom: '20px',
               color: '#000000'
             }}>
               CARGA HORÁRIA: <strong>40h</strong> &nbsp;&nbsp;|&nbsp;&nbsp; 
@@ -181,26 +157,23 @@ export default function App() {
             </div>
 
             <div style={certStyles.localData}>
-              CUIABÁ - MT, 21 de agosto de 2026
+              CUIABÁ - MT, 22 de agosto de 2026
             </div>
 
-            <br /><br />
+            <br />
 
-            {/* Linha de Assinaturas */}
+            {/* Rodapé com Linhas de Assinatura e Emissão */}
             <div style={certStyles.linhaAssinatura}>
-              {/* Lado Esquerdo - Direção Geral Atualizada */}
               <div style={certStyles.assinatura}>
                 <div style={certStyles.tracoAssinatura}></div>
-                <div>Direção Geral</div>
-                <strong>MAZZ CURSOS</strong>
-                <span style={{ fontSize: '10px', color: '#475569' }}>CNPJ: 68.664.946/0001-96</span>
+                <div>Direção Pedagogica</div>
+                <strong>MAZZ T.I e Capacitação</strong>
               </div>
 
-              {/* Lado Direito - Data de Emissão */}
               <div style={certStyles.assinatura}>
                 <div style={certStyles.tracoAssinatura}></div>
                 <div>Data de Emissão</div>
-                <strong>21 de agosto de 2026</strong>
+                <strong>22 de agosto de 2026</strong>
               </div>
             </div>
 
