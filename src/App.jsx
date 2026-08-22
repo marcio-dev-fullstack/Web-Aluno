@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
-// Assinatura convertida diretamente para Base64 (evita erros de arquivo faltando)
+// Assinatura em Base64
 const ASSINATURA_BASE64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABLAAAAGCCAYAAACxZ4x+AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAFlYSURBVHhe7d3532fVfR/x9w/4Q/0X/OEP9S//hP+A/4F/gH9AcGhcqh/X1k613mprtbbVutU4Y62ttS52rWttXVpba6s21a221lpbrW2ttm5U6251xX3X";
 
 const certStyles = {
@@ -61,6 +61,7 @@ const certStyles = {
 export default function App() {
   const certRef = useRef(null);
 
+  // Função para baixar o PDF
   const baixarCertificado = async () => {
     const element = certRef.current;
     if (!element) return;
@@ -86,11 +87,36 @@ export default function App() {
     }
   };
 
+  // Função para voltar à tela de cadastro
+  const voltarAoCadastro = () => {
+    window.location.hash = '#/admin'; // Ajuste aqui o caminho/rota se for diferente de /admin
+  };
+
   return (
     <div style={{ padding: '20px', backgroundColor: '#f3f4f6', minHeight: '100vh' }}>
       
-      {/* Botão de Download */}
-      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+      {/* Barra de Ações Suprior */}
+      <div style={{ textAlign: 'center', marginBottom: '20px', display: 'flex', justifyContent: 'center', gap: '15px' }}>
+        
+        {/* Botão de Voltar */}
+        <button 
+          onClick={voltarAoCadastro}
+          style={{
+            padding: '12px 24px',
+            backgroundColor: '#475569',
+            color: '#ffffff',
+            border: 'none',
+            borderRadius: '6px',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+          }}
+        >
+          ← Voltar ao Cadastro
+        </button>
+
+        {/* Botão de Download */}
         <button 
           onClick={baixarCertificado}
           style={{
@@ -107,16 +133,14 @@ export default function App() {
         >
           Baixar Certificado em PDF
         </button>
+
       </div>
 
       {/* Conteúdo do Certificado */}
       <div ref={certRef} style={certStyles.container}>
-        
-        {/* FRENTE DO CERTIFICADO */}
         <div style={certStyles.certificadoFrente}>
           <div style={certStyles.certificadoFrenteMolduraInterna}>
             
-            {/* Cabeçalho com CNPJ */}
             <h1 style={{ fontSize: '26px', color: '#1e3a8a', letterSpacing: '1px', marginBottom: '2px', fontWeight: 'bold' }}>
               MAZZ CURSOS & CAPACITAÇÕES
             </h1>
@@ -148,7 +172,6 @@ export default function App() {
               BUSINESS INTELLIGENCE COM POWER BI
             </h3>
 
-            {/* Status e Notas */}
             <div style={{
               display: 'inline-block',
               backgroundColor: '#f8fafc',
@@ -170,10 +193,7 @@ export default function App() {
 
             <br />
 
-            {/* Rodapé com Assinatura em Imagem */}
             <div style={certStyles.linhaAssinatura}>
-              
-              {/* Lado Esquerdo - Direção Geral */}
               <div style={certStyles.assinatura}>
                 <img 
                   src={ASSINATURA_BASE64} 
@@ -186,19 +206,16 @@ export default function App() {
                 <span style={{ fontSize: '10px', color: '#475569' }}>CNPJ: 68.664.946/0001-96</span>
               </div>
 
-              {/* Lado Direito - Data de Emissão */}
               <div style={certStyles.assinatura}>
                 <div style={{ height: '45px' }}></div>
                 <div style={certStyles.tracoAssinatura}></div>
                 <div>Data de Emissão</div>
                 <strong>22 de agosto de 2026</strong>
               </div>
-
             </div>
 
           </div>
         </div>
-
       </div>
     </div>
   );
