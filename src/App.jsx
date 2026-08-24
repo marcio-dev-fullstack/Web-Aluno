@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
 export default function App() {
+  // Inicializa e força a rota para #/login na primeira carga
   const [route, setRoute] = useState(window.location.hash || '#/login');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [usuarioInput, setUsuarioInput] = useState('');
   const [senhaInput, setSenhaInput] = useState('');
   const [activeTab, setActiveTab] = useState('alunos');
 
-  // Dados mockados para exibição e gestão no painel
+  // Dados para gestão escolar
   const [alunos] = useState([
     { id: 1, nome: 'KESIA MARIA', cpf: '034.264.572-29', curso: 'Business Intelligence com Power BI', status: 'Aprovado' },
     { id: 2, nome: 'MARCIO OLIVEIRA', cpf: '123.456.789-00', curso: 'Desenvolvimento Fullstack', status: 'Em Andamento' }
@@ -19,6 +20,12 @@ export default function App() {
   ]);
 
   useEffect(() => {
+    // Se acessar a raiz sem hash, força o redirecionamento imediato para #/login
+    if (!window.location.hash) {
+      window.location.hash = '#/login';
+      setRoute('#/login');
+    }
+
     const session = localStorage.getItem('webAlunoAuth');
     if (session === 'true') {
       setIsAuthenticated(true);
@@ -39,7 +46,7 @@ export default function App() {
       setIsAuthenticated(true);
       window.location.hash = '#/admin';
     } else {
-      alert('Usuário ou senha incorretos! (Use: admin / 123456)');
+      alert('Usuário ou senha incorretos! (Credenciais: admin / 123456)');
     }
   };
 
@@ -91,11 +98,11 @@ export default function App() {
       </header>
 
       <main className="w-full max-w-5xl">
-        {/* TELA DE LOGIN (Exibida por padrão em #/login ou se tentar acessar #/admin sem logar) */}
-        {(route.includes('/login') || (route.includes('/admin') && !isAuthenticated)) && (
+        {/* TELA INICIAL DE LOGIN (Forçada na abertura) */}
+        {(route.includes('/login') || !isAuthenticated) && (
           <div className="bg-white p-8 rounded shadow-lg border border-gray-300 max-w-md mx-auto text-center">
             <div className="text-3xl font-bold text-slate-800 mb-2">MAZZ</div>
-            <p className="text-xs text-red-700 font-semibold uppercase tracking-widest mb-6">Acesso Administrativo</p>
+            <p className="text-xs text-red-700 font-semibold uppercase tracking-widest mb-6">Acesso Ao Portal Administrativo</p>
             
             <form onSubmit={handleLogin} className="space-y-4">
               <input
@@ -124,7 +131,7 @@ export default function App() {
           </div>
         )}
 
-        {/* TELA DO PAINEL ADMIN (Exibida apenas autenticado) */}
+        {/* TELA DO PAINEL ADMIN (Liberado após autenticar) */}
         {route.includes('/admin') && isAuthenticated && (
           <div className="bg-white p-6 rounded shadow-lg border border-gray-300">
             <div className="flex justify-between items-center mb-6 pb-2 border-b">
@@ -134,7 +141,7 @@ export default function App() {
               </div>
               <button
                 type="button"
-                onClick={() => { window.location.hash = '#/'; }}
+                onClick={() => { window.location.hash = '#/certificado'; }}
                 className="bg-gray-200 hover:bg-gray-300 text-xs font-semibold px-3 py-1.5 rounded cursor-pointer"
               >
                 ← Ver Certificado
@@ -169,7 +176,7 @@ export default function App() {
               </button>
             </div>
 
-            {/* Conteúdo das Abas */}
+            {/* Conteúdo da Gestão */}
             {activeTab === 'alunos' && (
               <div>
                 <h3 className="font-bold text-sm mb-3">Lista de Alunos Cadastrados</h3>
@@ -228,8 +235,8 @@ export default function App() {
           </div>
         )}
 
-        {/* TELA DE EXIBIÇÃO DO CERTIFICADO */}
-        {!route.includes('/admin') && !route.includes('/login') && (
+        {/* TELA DE CERTIFICADO (Acessível via rota #/certificado após autenticado) */}
+        {route.includes('/certificado') && isAuthenticated && (
           <div className="bg-white p-8 rounded shadow-lg border-4 border-red-900 relative cert-container">
             <div className="border-2 border-slate-800 p-8 text-center flex flex-col items-center">
               <div className="mb-4">
@@ -237,7 +244,7 @@ export default function App() {
                   <span className="bg-slate-800 text-white px-2 py-1 rounded">M</span> MAZZ
                 </div>
                 <p className="text-xs text-red-700 font-semibold uppercase tracking-widest">Cursos & Capacitações</p>
-                <p class="text-xs text-gray-500">CNPJ: 68.664.946/0001-96</p>
+                <p className="text-xs text-gray-500">CNPJ: 68.664.946/0001-96</p>
               </div>
 
               <h1 className="text-2xl font-serif font-bold text-red-800 tracking-wider my-4">CERTIFICADO DE CONCLUSÃO</h1>
