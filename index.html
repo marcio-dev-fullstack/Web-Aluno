@@ -7,6 +7,18 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* Força a barra de botões a ter prioridade de clique e posicionamento */
+        .header-actions {
+            position: relative !important;
+            z-index: 99999 !important;
+            pointer-events: auto !important;
+        }
+
+        .header-actions button {
+            pointer-events: auto !important;
+            cursor: pointer !important;
+        }
+
         @media print {
             .no-print {
                 display: none !important;
@@ -26,15 +38,15 @@
 </head>
 <body class="bg-gray-100 font-sans min-h-screen flex flex-col items-center justify-start p-4">
 
-    <!-- Barra Superior de Botões -->
-    <header class="no-print w-full max-w-4xl flex justify-center gap-4 mb-6">
-        <button type="button" onclick="irParaAdmin()" class="bg-slate-800 hover:bg-slate-900 text-white font-medium px-4 py-2 rounded shadow flex items-center gap-2 cursor-pointer transition">
+    <!-- Barra Superior de Botões (z-index forçado para evitar bloqueio por transparência) -->
+    <header class="no-print header-actions w-full max-w-4xl flex justify-center gap-4 mb-6">
+        <button id="btnAdmin" type="button" class="bg-slate-800 hover:bg-slate-900 active:bg-black text-white font-medium px-4 py-2 rounded shadow flex items-center gap-2 cursor-pointer transition select-none">
             <span>⚙️</span> Painel Admin
         </button>
-        <button type="button" onclick="imprimirCertificado()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded shadow flex items-center gap-2 cursor-pointer transition">
+        <button id="btnImprimir" type="button" class="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-medium px-4 py-2 rounded shadow flex items-center gap-2 cursor-pointer transition select-none">
             <span>🖨️</span> Imprimir / PDF
         </button>
-        <button type="button" onclick="sairSessao()" class="bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded shadow flex items-center gap-2 cursor-pointer transition">
+        <button id="btnSair" type="button" class="bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-medium px-4 py-2 rounded shadow flex items-center gap-2 cursor-pointer transition select-none">
             <span>🚪</span> Sair
         </button>
     </header>
@@ -94,23 +106,38 @@
         </div>
     </main>
 
-    <!-- Scripts Inline sem dependência externa -->
+    <!-- Execução Garantida via EventListeners Isolados -->
     <script>
-        function imprimirCertificado() {
-            window.print();
-        }
+        window.addEventListener('load', function() {
+            var btnAdmin = document.getElementById('btnAdmin');
+            var btnImprimir = document.getElementById('btnImprimir');
+            var btnSair = document.getElementById('btnSair');
 
-        function irParaAdmin() {
-            window.location.hash = '#/admin';
-            alert("Redirecionando para a área Admin (#/admin)...");
-        }
-
-        function sairSessao() {
-            if (confirm("Deseja realmente sair da sessão?")) {
-                window.location.hash = '#/login';
-                alert("Sessão finalizada. Redirecionado para a tela de login (#/login).");
+            if (btnAdmin) {
+                btnAdmin.onclick = function(e) {
+                    e.stopPropagation();
+                    window.location.hash = '#/admin';
+                    alert('Navegando para o Painel Admin (#/admin)');
+                };
             }
-        }
+
+            if (btnImprimir) {
+                btnImprimir.onclick = function(e) {
+                    e.stopPropagation();
+                    window.print();
+                };
+            }
+
+            if (btnSair) {
+                btnSair.onclick = function(e) {
+                    e.stopPropagation();
+                    if (confirm('Deseja realmente sair?')) {
+                        window.location.hash = '#/login';
+                        alert('Sessão encerrada.');
+                    }
+                };
+            }
+        });
     </script>
 </body>
 </html>
