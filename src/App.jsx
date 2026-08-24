@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
 export default function App() {
-  // Estado de autenticação iniciado estritamente como FALSE
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [usuarioInput, setUsuarioInput] = useState('');
   const [senhaInput, setSenhaInput] = useState('');
   const [activeTab, setActiveTab] = useState('alunos');
   const [route, setRoute] = useState('#/login');
 
-  // Base de dados inicial
   const [alunos, setAlunos] = useState([
     { id: 1, nome: 'KESIA MARIA', cpf: '034.264.572-29', email: 'kesia@email.com', telefone: '(65) 99999-0001', nascimento: '1995-05-12' },
     { id: 2, nome: 'MARCIO OLIVEIRA', cpf: '123.456.789-00', email: 'marcio@email.com', telefone: '(65) 99999-0002', nascimento: '1988-10-20' }
@@ -28,7 +26,6 @@ export default function App() {
   const [formMatricula, setFormMatricula] = useState({ alunoId: '', cursoId: '', nota: '10.0', situacao: 'APROVADO' });
   const [certificadoAtivo, setCertificadoAtivo] = useState(matriculas[0]);
 
-  // Força o reset para a tela de login na abertura
   useEffect(() => {
     window.location.hash = '#/login';
     setRoute('#/login');
@@ -103,7 +100,6 @@ export default function App() {
         }
       `}</style>
 
-      {/* Se NÃO estiver autenticado, exibe SOMENTE a Tela de Login */}
       {!isAuthenticated ? (
         <div className="bg-white p-8 rounded shadow-lg border border-gray-300 max-w-md w-full mx-auto text-center mt-12">
           <div className="text-3xl font-bold text-slate-800 mb-1">MAZZ</div>
@@ -135,7 +131,6 @@ export default function App() {
           </form>
         </div>
       ) : (
-        /* Se ESTIVER autenticado, carrega a estrutura do Painel */
         <div className="w-full max-w-5xl">
           <header className="no-print w-full flex justify-center gap-4 mb-6">
             <button
