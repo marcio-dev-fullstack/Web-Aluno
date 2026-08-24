@@ -1,37 +1,62 @@
 import React, { useState, useEffect } from 'react';
 
 export default function App() {
-  const [route, setRoute] = useState(window.location.hash || '#/');
+  const [route, setRoute] = useState(window.location.hash || '#/login');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [usuarioInput, setUsuarioInput] = useState('');
+  const [senhaInput, setSenhaInput] = useState('');
+  const [activeTab, setActiveTab] = useState('alunos');
+
+  // Dados mockados para exibição e gestão no painel
+  const [alunos] = useState([
+    { id: 1, nome: 'KESIA MARIA', cpf: '034.264.572-29', curso: 'Business Intelligence com Power BI', status: 'Aprovado' },
+    { id: 2, nome: 'MARCIO OLIVEIRA', cpf: '123.456.789-00', curso: 'Desenvolvimento Fullstack', status: 'Em Andamento' }
+  ]);
+
+  const [cursos] = useState([
+    { id: 1, nome: 'Business Intelligence com Power BI', cargaHoraria: '40h' },
+    { id: 2, nome: 'Desenvolvimento Fullstack', cargaHoraria: '120h' }
+  ]);
 
   useEffect(() => {
+    const session = localStorage.getItem('webAlunoAuth');
+    if (session === 'true') {
+      setIsAuthenticated(true);
+    }
+
     const handleHashChange = () => {
-      setRoute(window.location.hash || '#/');
+      setRoute(window.location.hash || '#/login');
     };
+
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  const handleAdmin = () => {
-    window.location.hash = '#/admin';
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (usuarioInput === 'admin' && senhaInput === '123456') {
+      localStorage.setItem('webAlunoAuth', 'true');
+      setIsAuthenticated(true);
+      window.location.hash = '#/admin';
+    } else {
+      alert('Usuário ou senha incorretos! (Use: admin / 123456)');
+    }
+  };
+
+  const handleLogout = () => {
+    if (window.confirm('Deseja realmente sair do sistema?')) {
+      localStorage.removeItem('webAlunoAuth');
+      setIsAuthenticated(false);
+      window.location.hash = '#/login';
+    }
   };
 
   const handlePrint = () => {
     window.print();
   };
 
-  const handleLogout = () => {
-    if (window.confirm('Deseja realmente sair do sistema?')) {
-      window.location.hash = '#/login';
-    }
-  };
-
-  const handleVoltar = () => {
-    window.location.hash = '#/';
-  };
-
   return (
     <div className="bg-gray-100 font-sans min-h-screen flex flex-col items-center justify-start p-4">
-      {/* Estilos para impressão */}
       <style>{`
         @media print {
           .no-print { display: none !important; }
@@ -40,96 +65,179 @@ export default function App() {
         }
       `}</style>
 
-      {/* Barra de Navegação Superior Global */}
-      <header className="no-print w-full max-w-4xl flex justify-center gap-4 mb-6 z-50">
+      {/* Barra de Navegação Superior */}
+      <header className="no-print w-full max-w-5xl flex justify-center gap-4 mb-6 z-50">
         <button
           type="button"
-          onClick={handleAdmin}
-          className="bg-slate-800 hover:bg-slate-900 active:scale-95 text-white font-medium px-4 py-2 rounded shadow flex items-center gap-2 cursor-pointer transition select-none"
+          onClick={() => { window.location.hash = '#/admin'; }}
+          className="bg-slate-800 hover:bg-slate-900 text-white font-medium px-4 py-2 rounded shadow flex items-center gap-2 cursor-pointer transition select-none"
         >
           <span>⚙️</span> Painel Admin
         </button>
         <button
           type="button"
           onClick={handlePrint}
-          className="bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-medium px-4 py-2 rounded shadow flex items-center gap-2 cursor-pointer transition select-none"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded shadow flex items-center gap-2 cursor-pointer transition select-none"
         >
           <span>🖨️</span> Imprimir / PDF
         </button>
         <button
           type="button"
           onClick={handleLogout}
-          className="bg-red-600 hover:bg-red-700 active:scale-95 text-white font-medium px-4 py-2 rounded shadow flex items-center gap-2 cursor-pointer transition select-none"
+          className="bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded shadow flex items-center gap-2 cursor-pointer transition select-none"
         >
           <span>🚪</span> Sair
         </button>
       </header>
 
-      {/* Renderização Condicional de Telas baseada na Hash */}
-      <main className="w-full max-w-4xl">
-        {route.includes('/admin') && (
+      <main className="w-full max-w-5xl">
+        {/* TELA DE LOGIN (Exibida por padrão em #/login ou se tentar acessar #/admin sem logar) */}
+        {(route.includes('/login') || (route.includes('/admin') && !isAuthenticated)) && (
+          <div className="bg-white p-8 rounded shadow-lg border border-gray-300 max-w-md mx-auto text-center">
+            <div className="text-3xl font-bold text-slate-800 mb-2">MAZZ</div>
+            <p className="text-xs text-red-700 font-semibold uppercase tracking-widest mb-6">Acesso Administrativo</p>
+            
+            <form onSubmit={handleLogin} className="space-y-4">
+              <input
+                type="text"
+                placeholder="Usuário (admin)"
+                value={usuarioInput}
+                onChange={(e) => setUsuarioInput(e.target.value)}
+                className="w-full p-2.5 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-slate-800"
+                required
+              />
+              <input
+                type="password"
+                placeholder="Senha (123456)"
+                value={senhaInput}
+                onChange={(e) => setSenhaInput(e.target.value)}
+                className="w-full p-2.5 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-slate-800"
+                required
+              />
+              <button
+                type="submit"
+                className="w-full bg-slate-800 hover:bg-slate-900 text-white py-2.5 rounded font-medium cursor-pointer transition"
+              >
+                Entrar no Painel
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* TELA DO PAINEL ADMIN (Exibida apenas autenticado) */}
+        {route.includes('/admin') && isAuthenticated && (
           <div className="bg-white p-6 rounded shadow-lg border border-gray-300">
             <div className="flex justify-between items-center mb-6 pb-2 border-b">
-              <h2 className="text-xl font-bold text-slate-800">Painel Administrativo - MAZZ</h2>
+              <div>
+                <h2 className="text-xl font-bold text-slate-800">Painel do Administrador - MAZZ</h2>
+                <p className="text-xs text-gray-500">Gestão Escolar e Acadêmica</p>
+              </div>
               <button
                 type="button"
-                onClick={handleVoltar}
-                className="bg-gray-200 hover:bg-gray-300 text-xs px-3 py-1.5 rounded cursor-pointer"
+                onClick={() => { window.location.hash = '#/'; }}
+                className="bg-gray-200 hover:bg-gray-300 text-xs font-semibold px-3 py-1.5 rounded cursor-pointer"
               >
-                ← Voltar ao Certificado
+                ← Ver Certificado
               </button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <div className="p-4 bg-gray-50 border rounded">
-                <h3 className="font-bold mb-2">Gerenciar Alunos</h3>
-                <p className="text-gray-600 text-xs mb-4">Cadastrar ou editar certificados emitidos.</p>
-                <button
-                  type="button"
-                  onClick={() => alert('Módulo de cadastro ativado')}
-                  className="bg-slate-800 text-white text-xs px-3 py-1.5 rounded cursor-pointer"
-                >
-                  Novo Aluno
-                </button>
-              </div>
-              <div className="p-4 bg-gray-50 border rounded">
-                <h3 className="font-bold mb-2">Configurações de Cursos</h3>
-                <p className="text-gray-600 text-xs mb-4">Cargas horárias e chaves de validação.</p>
-                <button
-                  type="button"
-                  onClick={() => alert('Módulo de cursos ativado')}
-                  className="bg-slate-800 text-white text-xs px-3 py-1.5 rounded cursor-pointer"
-                >
-                  Gerenciar Cursos
-                </button>
-              </div>
+
+            {/* Abas do Painel */}
+            <div className="flex gap-2 mb-6 border-b pb-2">
+              <button
+                onClick={() => setActiveTab('alunos')}
+                className={`px-3 py-1.5 text-xs font-bold rounded cursor-pointer ${activeTab === 'alunos' ? 'bg-slate-800 text-white' : 'bg-gray-100 text-gray-700'}`}
+              >
+                👨‍🎓 Alunos
+              </button>
+              <button
+                onClick={() => setActiveTab('cursos')}
+                className={`px-3 py-1.5 text-xs font-bold rounded cursor-pointer ${activeTab === 'cursos' ? 'bg-slate-800 text-white' : 'bg-gray-100 text-gray-700'}`}
+              >
+                📚 Cursos
+              </button>
+              <button
+                onClick={() => setActiveTab('matriculas')}
+                className={`px-3 py-1.5 text-xs font-bold rounded cursor-pointer ${activeTab === 'matriculas' ? 'bg-slate-800 text-white' : 'bg-gray-100 text-gray-700'}`}
+              >
+                📝 Matrículas
+              </button>
+              <button
+                onClick={() => setActiveTab('fichas')}
+                className={`px-3 py-1.5 text-xs font-bold rounded cursor-pointer ${activeTab === 'fichas' ? 'bg-slate-800 text-white' : 'bg-gray-100 text-gray-700'}`}
+              >
+                📄 Fichas dos Alunos
+              </button>
             </div>
+
+            {/* Conteúdo das Abas */}
+            {activeTab === 'alunos' && (
+              <div>
+                <h3 className="font-bold text-sm mb-3">Lista de Alunos Cadastrados</h3>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs text-left border">
+                    <thead className="bg-gray-100 border-b">
+                      <tr>
+                        <th className="p-2 border-r">Nome</th>
+                        <th className="p-2 border-r">CPF</th>
+                        <th className="p-2 border-r">Curso</th>
+                        <th className="p-2">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {alunos.map((item) => (
+                        <tr key={item.id} className="border-b">
+                          <td className="p-2 border-r font-semibold">{item.nome}</td>
+                          <td className="p-2 border-r">{item.cpf}</td>
+                          <td className="p-2 border-r">{item.curso}</td>
+                          <td className="p-2 font-bold text-green-700">{item.status}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'cursos' && (
+              <div>
+                <h3 className="font-bold text-sm mb-3">Cursos da Escola</h3>
+                <ul className="space-y-2 text-xs">
+                  {cursos.map((c) => (
+                    <li key={c.id} className="p-3 bg-gray-50 border rounded flex justify-between">
+                      <span className="font-semibold">{c.nome}</span>
+                      <span className="text-gray-500">Carga Horária: {c.cargaHoraria}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {activeTab === 'matriculas' && (
+              <div className="text-xs text-gray-600">
+                <h3 className="font-bold text-sm mb-3 text-slate-800">Controle de Matrículas</h3>
+                <p>Gestão de turmas e novas matrículas ativas na instituição.</p>
+              </div>
+            )}
+
+            {activeTab === 'fichas' && (
+              <div className="text-xs text-gray-600">
+                <h3 className="font-bold text-sm mb-3 text-slate-800">Fichas Cadastrais dos Alunos</h3>
+                <p>Acesso rápido aos históricos escolares e dados de certificação.</p>
+              </div>
+            )}
           </div>
         )}
 
-        {route.includes('/login') && (
-          <div className="bg-white p-8 rounded shadow-lg border border-gray-300 max-w-md mx-auto text-center">
-            <h2 className="text-xl font-bold text-slate-800 mb-4">Acesso ao Portal</h2>
-            <input type="text" placeholder="Usuário / CPF" className="w-full p-2 border rounded mb-3 text-sm" />
-            <input type="password" placeholder="Senha" className="w-full p-2 border rounded mb-4 text-sm" />
-            <button
-              type="button"
-              onClick={handleAdmin}
-              className="w-full bg-slate-800 text-white py-2 rounded font-medium hover:bg-slate-900 cursor-pointer"
-            >
-              Entrar no Painel
-            </button>
-          </div>
-        )}
-
+        {/* TELA DE EXIBIÇÃO DO CERTIFICADO */}
         {!route.includes('/admin') && !route.includes('/login') && (
           <div className="bg-white p-8 rounded shadow-lg border-4 border-red-900 relative cert-container">
             <div className="border-2 border-slate-800 p-8 text-center flex flex-col items-center">
               <div className="mb-4">
                 <div className="text-3xl font-bold text-slate-800 flex items-center justify-center gap-2">
-                  <span class="bg-slate-800 text-white px-2 py-1 rounded">M</span> MAZZ
+                  <span className="bg-slate-800 text-white px-2 py-1 rounded">M</span> MAZZ
                 </div>
                 <p className="text-xs text-red-700 font-semibold uppercase tracking-widest">Cursos & Capacitações</p>
-                <p className="text-xs text-gray-500">CNPJ: 68.664.946/0001-96</p>
+                <p class="text-xs text-gray-500">CNPJ: 68.664.946/0001-96</p>
               </div>
 
               <h1 className="text-2xl font-serif font-bold text-red-800 tracking-wider my-4">CERTIFICADO DE CONCLUSÃO</h1>
