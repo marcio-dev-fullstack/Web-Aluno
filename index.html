@@ -4,37 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal do Aluno - MAZZ</title>
-    <!-- Tailwind CSS para estilização rápida e responsiva -->
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Estilos específicos para impressão -->
     <style>
         @media print {
             .no-print {
                 display: none !important;
             }
             body {
-                background: white;
-                margin: 0;
-                padding: 0;
+                background: white !important;
+                margin: 0 !important;
+                padding: 0 !important;
             }
             .cert-container {
                 border: 2px solid #000 !important;
                 box-shadow: none !important;
+                margin: 0 auto !important;
             }
         }
     </style>
 </head>
 <body class="bg-gray-100 font-sans min-h-screen flex flex-col items-center justify-start p-4">
 
-    <!-- Barra Superior de Botões (Oculta na impressão) -->
+    <!-- Barra Superior de Botões -->
     <header class="no-print w-full max-w-4xl flex justify-center gap-4 mb-6">
-        <button id="btnAdmin" class="bg-slate-800 hover:bg-slate-900 text-white font-medium px-4 py-2 rounded shadow flex items-center gap-2 transition">
+        <button type="button" onclick="irParaAdmin()" class="bg-slate-800 hover:bg-slate-900 text-white font-medium px-4 py-2 rounded shadow flex items-center gap-2 cursor-pointer transition">
             <span>⚙️</span> Painel Admin
         </button>
-        <button id="btnImprimir" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded shadow flex items-center gap-2 transition">
+        <button type="button" onclick="imprimirCertificado()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded shadow flex items-center gap-2 cursor-pointer transition">
             <span>🖨️</span> Imprimir / PDF
         </button>
-        <button id="btnSair" class="bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded shadow flex items-center gap-2 transition">
+        <button type="button" onclick="sairSessao()" class="bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded shadow flex items-center gap-2 cursor-pointer transition">
             <span>🚪</span> Sair
         </button>
     </header>
@@ -75,7 +75,7 @@
             <!-- Assinatura -->
             <div class="mt-8 border-t border-slate-800 pt-2 w-64">
                 <p class="text-xs font-bold text-slate-800">Direção Geral</p>
-                <p class="text-[10px] text-gray-500">MAZZ CURSOS</p>
+                <p class="text-[10px] text-gray-500">MAZZ Cursos</p>
                 <p class="text-[10px] text-gray-500">CNPJ: 68.664.946/0001-96</p>
             </div>
 
@@ -87,7 +87,6 @@
                     <p>Chave de Validação: <strong id="chaveValidacao" class="text-slate-800">MZZ-2026-68E0-0C28</strong></p>
                 </div>
                 <div>
-                    <!-- QR Code Placeholder -->
                     <img id="qrCodeImg" src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=MZZ-2026-68E0-0C28" alt="QR Code" class="w-16 h-16 border p-1">
                 </div>
             </div>
@@ -95,7 +94,23 @@
         </div>
     </main>
 
-    <!-- O atributo 'defer' garante que o script rodes Apenas após o HTML carregar completamente -->
-    <script src="app.js" defer></script>
+    <!-- Scripts Inline sem dependência externa -->
+    <script>
+        function imprimirCertificado() {
+            window.print();
+        }
+
+        function irParaAdmin() {
+            window.location.hash = '#/admin';
+            alert("Redirecionando para a área Admin (#/admin)...");
+        }
+
+        function sairSessao() {
+            if (confirm("Deseja realmente sair da sessão?")) {
+                window.location.hash = '#/login';
+                alert("Sessão finalizada. Redirecionado para a tela de login (#/login).");
+            }
+        }
+    </script>
 </body>
 </html>
