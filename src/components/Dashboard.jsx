@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import ListaAlunos from './ListaAlunos';
 import { cursosIniciais } from '../data/cursosIniciais';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+
+// Importações ajustadas para compatibilidade com Vite
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 export default function Dashboard() {
   const [abaAtiva, setAbaAtiva] = useState('alunos');
@@ -13,7 +15,7 @@ export default function Dashboard() {
   const [whatsappAluno, setWhatsappAluno] = useState('');
   const [cpfAluno, setCpfAluno] = useState('');
 
-  // Cursos (Usa 'cursos_v2' para manter sincronizado com as versões anteriores)
+  // Cursos (Usa 'cursos_v2' para garantir os 158 cursos novos)
   const [cursos, setCursos] = useState(() => {
     const salvos = localStorage.getItem('cursos_v2');
     return salvos ? JSON.parse(salvos) : cursosIniciais;
@@ -119,53 +121,60 @@ export default function Dashboard() {
     setMatriculaCursoId('');
   };
 
-  // GERADOR DE PDF DA GRADE DE CURSOS
-  const gerarPDFCursos = () => {
-    const doc = new jsPDF();
-
-    // Cabeçalho do PDF
-    doc.setFontSize(18);
-    doc.setTextColor(30, 58, 138); // Azul escuro
-    doc.text('MAZZ - Grade Curricular de Cursos', 14, 20);
-
-    doc.setFontSize(10);
-    doc.setTextColor(100);
-    doc.text(`Total de Cursos: ${cursosFiltrados.length} | Gerado em: ${new Date().toLocaleDateString('pt-BR')}`, 14, 27);
-
-    // Tabela dos Cursos
-    const tableData = cursosFiltrados.map((curso, index) => [
-      index + 1,
-      curso.nome,
-      curso.cargaHoraria
-    ]);
-
-    doc.autoTable({
-      startY: 32,
-      head: [['#', 'Nome do Curso', 'Carga Horária']],
-      body: tableData,
-      theme: 'striped',
-      headStyles: {
-        fillColor: [30, 58, 138],
-        textColor: [255, 255, 255],
-        fontStyle: 'bold'
-      },
-      columnStyles: {
-        0: { cellWidth: 15, halign: 'center' },
-        1: { cellWidth: 'auto' },
-        2: { cellWidth: 35, halign: 'center' }
-      },
-      styles: {
-        fontSize: 9,
-        cellPadding: 3
-      }
-    });
-
-    doc.save('Grade_de_Cursos_MAZZ.pdf');
-  };
-
   const cursosFiltrados = cursos.filter(c => 
     c.nome.toLowerCase().includes(buscaCurso.toLowerCase())
   );
+
+  // GERAÇÃO DE PDF
+  const gerarPDFCursos = () => {
+    try {
+      const doc = new jsPDF();
+
+      doc.setFontSize(18);
+      doc.setTextColor(30, 58, 138);
+      doc.text('MAZZ - Grade Curricular de Cursos', 14, 20);
+
+      doc.setFontSize(10);
+      doc.setTextColor(100);
+      doc.text(
+        `Total de Cursos: ${cursosFiltrados.length} | Gerado em: ${new Date().toLocaleDateString('pt-BR')}`,
+        14,
+        27
+      );
+
+      const tableData = cursosFiltrados.map((curso, index) => [
+        index + 1,
+        curso.nome,
+        curso.cargaHoraria
+      ]);
+
+      autoTable(doc, {
+        startY: 32,
+        head: [['#', 'Nome do Curso', 'Carga Horária']],
+        body: tableData,
+        theme: 'striped',
+        headStyles: {
+          fillColor: [30, 58, 138],
+          textColor: [255, 255, 255],
+          fontStyle: 'bold'
+        },
+        columnStyles: {
+          0: { cellWidth: 15, halign: 'center' },
+          1: { cellWidth: 'auto' },
+          2: { cellWidth: 35, halign: 'center' }
+        },
+        styles: {
+          fontSize: 9,
+          cellPadding: 3
+        }
+      });
+
+      doc.save('Grade_de_Cursos_MAZZ.pdf');
+    } catch (error) {
+      console.error('Erro ao gerar PDF:', error);
+      alert('Ocorreu um erro ao gerar o PDF. Verifique o console para mais detalhes.');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
@@ -346,7 +355,6 @@ export default function Dashboard() {
                   </h3>
 
                   <div className="flex items-center gap-3">
-                    {/* BOTÃO BAIXAR PDF */}
                     <button
                       onClick={gerarPDFCursos}
                       className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3 py-2 rounded-xl transition cursor-pointer shadow-lg shadow-emerald-600/20 flex items-center gap-1.5"
