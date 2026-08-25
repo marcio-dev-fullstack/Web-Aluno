@@ -7,8 +7,8 @@ export default function Certificado({ aluno, curso, onClose }) {
 
   if (!aluno || !curso) return null;
 
-  // Link de validação configurado
-  const linkValidacao = 'https://github.com/marcio-dev-fullstack/Web-Aluno/valida';
+  // URL corrigida para o seu GitHub Pages com Hash Routing
+  const linkValidacao = 'https://marcio-dev-fullstack.github.io/Web-Aluno/#/valida';
   const qrCodeUrl = `https://quickchart.io/qr?text=${encodeURIComponent(linkValidacao)}&size=150`;
 
   return (
@@ -77,9 +77,8 @@ export default function Certificado({ aluno, curso, onClose }) {
           </p>
         </div>
 
-        {/* Rodapé: QR Code na esquerda e Instrutor Centralizado */}
+        {/* Rodapé */}
         <div className="grid grid-cols-3 items-end pt-4 pb-2">
-          {/* QR Code de Validação */}
           <div className="flex flex-col items-start text-left space-y-1">
             <img 
               src={qrCodeUrl} 
@@ -91,14 +90,12 @@ export default function Certificado({ aluno, curso, onClose }) {
             </span>
           </div>
 
-          {/* Assinatura Centralizada do Instrutor */}
           <div className="flex flex-col items-center">
             <div className="w-56 border-t-2 border-slate-700 pt-2 text-xs md:text-sm font-bold text-slate-800">
               Instrutor Responsável
             </div>
           </div>
 
-          {/* Espaço reservado para manter o alinhamento de 3 colunas */}
           <div></div>
         </div>
 

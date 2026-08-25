@@ -1,28 +1,22 @@
-import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import Login from './components/Login';
+import React, { useState, useEffect } from 'react';
 import Dashboard from './components/Dashboard';
-
-// Rota protegida: se não estiver logado, redireciona para /login
-function RotaProtegida({ children }) {
-  const autenticado = localStorage.getItem('autenticado') === 'true';
-  return autenticado ? children : <Navigate to="/login" replace />;
-}
+import Login from './components/Login';
+import Validacao from './components/Validacao';
 
 export default function App() {
-  return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route
-        path="/dashboard"
-        element={
-          <RotaProtegida>
-            <Dashboard />
-          </RotaProtegida>
-        }
-      />
-      {/* Redireciona a raiz para /login */}
-      <Route path="*" element={<Navigate to="/login" replace />} />
-    </Routes>
-  );
+  const [route, setRoute] = useState(window.location.hash);
+
+  useEffect(() => {
+    const handleHashChange = () => setRoute(window.location.hash);
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  if (route.includes('/valida')) {
+    return <Validacao />;
+  }
+
+  const logado = localStorage.getItem('usuarioLogado');
+
+  return logado ? <Dashboard /> : <Login />;
 }
