@@ -7,9 +7,12 @@ export default function Certificado({ aluno, curso, onClose }) {
 
   if (!aluno || !curso) return null;
 
-  // URL corrigida para o seu GitHub Pages com Hash Routing
-  const linkValidacao = 'https://marcio-dev-fullstack.github.io/Web-Aluno/#/valida';
-  const qrCodeUrl = `https://quickchart.io/qr?text=${encodeURIComponent(linkValidacao)}&size=150`;
+  // Monta a URL completa para a página de validação
+  const baseUrl = window.location.origin + window.location.pathname;
+  const linkValidacao = `${baseUrl}#/valida`;
+  
+  // Utiliza a API do QuickChart garantindo a codificação correta do Link
+  const qrCodeUrl = `https://quickchart.io/qr?text=${encodeURIComponent(linkValidacao)}&size=200`;
 
   return (
     <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-4 z-50 overflow-y-auto">
@@ -77,7 +80,7 @@ export default function Certificado({ aluno, curso, onClose }) {
           </p>
         </div>
 
-        {/* Rodapé */}
+        {/* Rodapé: QR Code e Assinatura */}
         <div className="grid grid-cols-3 items-end pt-4 pb-2">
           <div className="flex flex-col items-start text-left space-y-1">
             <img 
