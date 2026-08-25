@@ -1,11 +1,3 @@
-/**
- * File Name: Certificado.jsx
- * Description: 
- * Developer: Marcio
- * Created Date: 2026-08-25
- * Last Modified: 2026-08-25
- */
-
 import React from 'react';
 
 export default function Certificado({ aluno, curso, onClose }) {
@@ -17,7 +9,7 @@ export default function Certificado({ aluno, curso, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-4 z-50 overflow-y-auto">
-      {/* Barra de Ações (Apenas na tela - Oculta ao Imprimir) */}
+      {/* Barra de Ações (Oculta na Impressão) */}
       <div className="w-full max-w-4xl flex justify-between items-center mb-4 print:hidden">
         <button
           onClick={onClose}
@@ -33,7 +25,7 @@ export default function Certificado({ aluno, curso, onClose }) {
         </button>
       </div>
 
-      {/* ÁREA DO CERTIFICADO (Formatada para Impressão) */}
+      {/* ÁREA DO CERTIFICADO */}
       <div className="bg-white text-slate-900 w-full max-w-4xl aspect-[1.414/1] p-8 md:p-12 border-[12px] border-blue-900 shadow-2xl flex flex-col justify-between text-center relative print:w-full print:h-screen print:max-w-none print:border-[10px] print:shadow-none print:m-0">
         
         {/* Moldura Interna */}
@@ -41,14 +33,14 @@ export default function Certificado({ aluno, curso, onClose }) {
 
         {/* Cabeçalho */}
         <div className="space-y-2 pt-4">
-          <h1 className="text-2xl md:text-3xl font-black text-blue-900 uppercase tracking-widest">
-            Engenharia Academy
+          <h1 className="text-3xl md:text-5xl font-black text-blue-900 uppercase tracking-widest">
+            MAZZ
           </h1>
           <p className="text-xs md:text-sm font-semibold text-slate-500 uppercase tracking-wider">
             Plataforma de Capacitação Profissional
           </p>
           <div className="pt-4">
-            <h2 className="text-3xl md:text-5xl font-black text-slate-900 uppercase tracking-wide">
+            <h2 className="text-2xl md:text-4xl font-black text-slate-900 uppercase tracking-wide">
               Certificado de Conclusão
             </h2>
           </div>
