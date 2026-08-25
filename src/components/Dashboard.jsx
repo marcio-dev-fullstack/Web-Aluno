@@ -11,13 +11,13 @@ export default function Dashboard() {
   const [whatsappAluno, setWhatsappAluno] = useState('');
   const [cpfAluno, setCpfAluno] = useState('');
 
-  // Estado dos Cursos (inicia com os 158 cursos do arquivo ou os salvos no localStorage)
+  // Cursos (Usa 'cursos_v2' para sobrescrever o cache antigo do navegador)
   const [cursos, setCursos] = useState(() => {
-    const salvos = localStorage.getItem('cursos');
+    const salvos = localStorage.getItem('cursos_v2');
     return salvos ? JSON.parse(salvos) : cursosIniciais;
   });
 
-  // Estado para cadastro de Curso
+  const [buscaCurso, setBuscaCurso] = useState('');
   const [nomeCurso, setNomeCurso] = useState('');
   const [cargaHoraria, setCargaHoraria] = useState('40h');
 
@@ -26,12 +26,10 @@ export default function Dashboard() {
   const [matriculaCursoId, setMatriculaCursoId] = useState('');
   const [alunos, setAlunos] = useState([]);
 
-  // Atualiza a lista de cursos no LocalStorage sempre que for modificada
   useEffect(() => {
-    localStorage.setItem('cursos', JSON.stringify(cursos));
+    localStorage.setItem('cursos_v2', JSON.stringify(cursos));
   }, [cursos]);
 
-  // Carrega a lista de alunos para o formulário de matrículas
   useEffect(() => {
     const alunosSalvos = JSON.parse(localStorage.getItem('alunos') || '[]');
     setAlunos(alunosSalvos);
@@ -41,6 +39,13 @@ export default function Dashboard() {
     localStorage.removeItem('usuarioLogado');
     window.location.hash = '#/';
     window.location.reload();
+  };
+
+  const handleRestaurarCursosPadrao = () => {
+    if (window.confirm('Deseja recarregar a lista padrão de 158 cursos?')) {
+      setCursos(cursosIniciais);
+      localStorage.setItem('cursos_v2', JSON.stringify(cursosIniciais));
+    }
   };
 
   const handleCadastrarAluno = (e) => {
@@ -58,7 +63,6 @@ export default function Dashboard() {
     localStorage.setItem('alunos', JSON.stringify(novosAlunos));
     setAlunos(novosAlunos);
     
-    // Limpa os campos e redireciona para a lista
     setNomeAluno('');
     setEmailAluno('');
     setWhatsappAluno('');
@@ -75,7 +79,7 @@ export default function Dashboard() {
       cargaHoraria
     };
 
-    const novaListaCursos = [...cursos, novoCurso];
+    const novaListaCursos = [novoCurso, ...cursos];
     setCursos(novaListaCursos);
 
     setNomeCurso('');
@@ -92,7 +96,6 @@ export default function Dashboard() {
 
     const matriculas = JSON.parse(localStorage.getItem('matriculas') || '[]');
     
-    // Verifica se já está matriculado
     const jaMatriculado = matriculas.some(
       (m) => String(m.alunoId) === String(matriculaAlunoId) && String(m.cursoId) === String(matriculaCursoId)
     );
@@ -113,6 +116,10 @@ export default function Dashboard() {
     setMatriculaAlunoId('');
     setMatriculaCursoId('');
   };
+
+  const cursosFiltrados = cursos.filter(c => 
+    c.nome.toLowerCase().includes(buscaCurso.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
@@ -136,7 +143,7 @@ export default function Dashboard() {
       {/* CONTEÚDO PRINCIPAL */}
       <main className="flex-1 max-w-6xl w-full mx-auto p-4 md:p-6 space-y-6">
         
-        {/* MENU DE ABAS DA NAVEGAÇÃO */}
+        {/* NAVEGAÇÃO DE ABAS */}
         <div className="flex flex-wrap justify-center gap-2 bg-slate-900/60 p-1.5 rounded-2xl border border-slate-800/80">
           <button
             onClick={() => setAbaAtiva('cadastrarAluno')}
@@ -168,7 +175,7 @@ export default function Dashboard() {
                 : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
             }`}
           >
-            📚 Cadastrar Cursos
+            📚 Cursos ({cursos.length})
           </button>
 
           <button
@@ -183,10 +190,10 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* CONTAINER DINÂMICO DE ABAS */}
+        {/* ÁREA DA ABA SELECIONADA */}
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
           
-          {/* ABA: CADASTRAR ALUNO */}
+          {/* CADASTRAR ALUNO */}
           {abaAtiva === 'cadastrarAluno' && (
             <div className="max-w-md mx-auto space-y-4">
               <h2 className="text-base font-bold text-white">Cadastrar Novo Aluno</h2>
@@ -202,7 +209,6 @@ export default function Dashboard() {
                     required
                   />
                 </div>
-
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1">E-mail</label>
                   <input
@@ -214,7 +220,6 @@ export default function Dashboard() {
                     required
                   />
                 </div>
-
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1">WhatsApp</label>
                   <input
@@ -226,7 +231,6 @@ export default function Dashboard() {
                     required
                   />
                 </div>
-
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1">CPF</label>
                   <input
@@ -238,10 +242,9 @@ export default function Dashboard() {
                     required
                   />
                 </div>
-
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs py-3 rounded-xl transition cursor-pointer shadow-lg shadow-blue-600/20 pt-3"
+                  className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs py-3 rounded-xl transition cursor-pointer shadow-lg shadow-blue-600/20"
                 >
                   Salvar Aluno
                 </button>
@@ -249,49 +252,93 @@ export default function Dashboard() {
             </div>
           )}
 
-          {/* ABA: LISTA DE ALUNOS */}
+          {/* LISTA DE ALUNOS */}
           {abaAtiva === 'alunos' && <ListaAlunos />}
 
-          {/* ABA: CADASTRAR CURSOS */}
+          {/* CADASTRAR E LISTAR CURSOS */}
           {abaAtiva === 'cursos' && (
-            <div className="max-w-md mx-auto space-y-4">
-              <h2 className="text-base font-bold text-white">Cadastrar Novo Curso</h2>
-              <form onSubmit={handleCadastrarCurso} className="space-y-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Nome do Curso</label>
-                  <input
-                    type="text"
-                    value={nomeCurso}
-                    onChange={(e) => setNomeCurso(e.target.value)}
-                    placeholder="Ex: Engenharia Civil: Gestão de Obras"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-100 focus:border-blue-500 focus:outline-none transition"
-                    required
-                  />
+            <div className="space-y-6">
+              <div className="max-w-md mx-auto bg-slate-950/50 p-4 border border-slate-800 rounded-xl space-y-4">
+                <h2 className="text-base font-bold text-white">Cadastrar Novo Curso</h2>
+                <form onSubmit={handleCadastrarCurso} className="space-y-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1">Nome do Curso</label>
+                    <input
+                      type="text"
+                      value={nomeCurso}
+                      onChange={(e) => setNomeCurso(e.target.value)}
+                      placeholder="Ex: Engenharia Civil: Gestão de Obras"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-100 focus:border-blue-500 focus:outline-none transition"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1">Carga Horária</label>
+                    <input
+                      type="text"
+                      value={cargaHoraria}
+                      onChange={(e) => setCargaHoraria(e.target.value)}
+                      placeholder="Ex: 40h"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-100 focus:border-blue-500 focus:outline-none transition"
+                      required
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs py-3 rounded-xl transition cursor-pointer shadow-lg shadow-blue-600/20"
+                  >
+                    Salvar Novo Curso
+                  </button>
+                </form>
+              </div>
+
+              {/* LISTA COMPLETA E BUSCA DE CURSOS */}
+              <div className="space-y-4 pt-4 border-t border-slate-800">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                  <h3 className="text-sm font-bold text-white">
+                    Cursos Cadastrados ({cursosFiltrados.length})
+                  </h3>
+                  <button
+                    onClick={handleRestaurarCursosPadrao}
+                    className="text-xs text-slate-400 hover:text-amber-400 underline cursor-pointer"
+                  >
+                    🔄 Restaurar Lista Padrão de Cursos
+                  </button>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Carga Horária</label>
-                  <input
-                    type="text"
-                    value={cargaHoraria}
-                    onChange={(e) => setCargaHoraria(e.target.value)}
-                    placeholder="Ex: 40h"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-100 focus:border-blue-500 focus:outline-none transition"
-                    required
-                  />
-                </div>
+                <input
+                  type="text"
+                  value={buscaCurso}
+                  onChange={(e) => setBuscaCurso(e.target.value)}
+                  placeholder="Pesquisar curso por nome..."
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-100 focus:border-blue-500 focus:outline-none transition"
+                />
 
-                <button
-                  type="submit"
-                  className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs py-3 rounded-xl transition cursor-pointer shadow-lg shadow-blue-600/20"
-                >
-                  Salvar Curso
-                </button>
-              </form>
+                <div className="max-h-96 overflow-y-auto border border-slate-800 rounded-xl">
+                  <table className="w-full text-left text-xs text-slate-300">
+                    <thead className="bg-slate-950 text-slate-400 sticky top-0 border-b border-slate-800">
+                      <tr>
+                        <th className="p-3">#</th>
+                        <th className="p-3">Nome do Curso</th>
+                        <th className="p-3 text-right">Carga Horária</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800/50">
+                      {cursosFiltrados.map((c, index) => (
+                        <tr key={c.id} className="hover:bg-slate-800/30">
+                          <td className="p-3 font-mono text-slate-500">{index + 1}</td>
+                          <td className="p-3 font-medium text-slate-200">{c.nome}</td>
+                          <td className="p-3 text-right font-mono text-blue-400">{c.cargaHoraria}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
           )}
 
-          {/* ABA: MATRICULAR ALUNOS */}
+          {/* MATRICULAR ALUNOS */}
           {abaAtiva === 'matricular' && (
             <div className="max-w-md mx-auto space-y-4">
               <h2 className="text-base font-bold text-white">Matricular Aluno em Curso</h2>
@@ -314,7 +361,9 @@ export default function Dashboard() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Selecione o Curso ({cursos.length} disponíveis)</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    Selecione o Curso ({cursos.length} disponíveis)
+                  </label>
                   <select
                     value={matriculaCursoId}
                     onChange={(e) => setMatriculaCursoId(e.target.value)}
