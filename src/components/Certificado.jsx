@@ -7,6 +7,10 @@ export default function Certificado({ aluno, curso, onClose }) {
 
   if (!aluno || !curso) return null;
 
+  // Link de validação configurado
+  const linkValidacao = 'https://github.com/marcio-dev-fullstack/Web-Aluno/valida';
+  const qrCodeUrl = `https://quickchart.io/qr?text=${encodeURIComponent(linkValidacao)}&size=150`;
+
   return (
     <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-4 z-50 overflow-y-auto">
       {/* Barra de Ações (Oculta na Impressão) */}
@@ -32,14 +36,14 @@ export default function Certificado({ aluno, curso, onClose }) {
         <div className="absolute inset-2 border-2 border-blue-300 pointer-events-none"></div>
 
         {/* Cabeçalho */}
-        <div className="space-y-2 pt-4">
+        <div className="space-y-2 pt-2">
           <h1 className="text-3xl md:text-5xl font-black text-blue-900 uppercase tracking-widest">
             MAZZ
           </h1>
           <p className="text-xs md:text-sm font-semibold text-slate-500 uppercase tracking-wider">
             Plataforma de Capacitação Profissional
           </p>
-          <div className="pt-4">
+          <div className="pt-2">
             <h2 className="text-2xl md:text-4xl font-black text-slate-900 uppercase tracking-wide">
               Certificado de Conclusão
             </h2>
@@ -47,7 +51,7 @@ export default function Certificado({ aluno, curso, onClose }) {
         </div>
 
         {/* Corpo do Certificado */}
-        <div className="my-6 space-y-4">
+        <div className="my-4 space-y-3">
           <p className="text-base md:text-lg text-slate-700 leading-relaxed">
             Certificamos que o(a) aluno(a)
           </p>
@@ -60,7 +64,7 @@ export default function Certificado({ aluno, curso, onClose }) {
             CPF: <strong>{aluno.cpf}</strong>
           </p>
 
-          <p className="text-base md:text-lg text-slate-700 leading-relaxed pt-2">
+          <p className="text-base md:text-lg text-slate-700 leading-relaxed pt-1">
             concluiu com êxito o curso de capacitação em
           </p>
 
@@ -73,18 +77,29 @@ export default function Certificado({ aluno, curso, onClose }) {
           </p>
         </div>
 
-        {/* Rodapé e Assinaturas */}
-        <div className="grid grid-cols-2 gap-8 pt-8 pb-4">
-          <div className="flex flex-col items-center">
-            <div className="w-48 border-t-2 border-slate-700 pt-2 text-xs md:text-sm font-bold text-slate-800">
-              Direção Acadêmica
-            </div>
+        {/* Rodapé: QR Code na esquerda e Instrutor Centralizado */}
+        <div className="grid grid-cols-3 items-end pt-4 pb-2">
+          {/* QR Code de Validação */}
+          <div className="flex flex-col items-start text-left space-y-1">
+            <img 
+              src={qrCodeUrl} 
+              alt="QR Code de Validação" 
+              className="w-20 h-20 border border-slate-300 rounded p-1"
+            />
+            <span className="text-[9px] text-slate-500 font-mono leading-tight">
+              Valide a autenticidade<br />escaneando o QR Code
+            </span>
           </div>
+
+          {/* Assinatura Centralizada do Instrutor */}
           <div className="flex flex-col items-center">
-            <div className="w-48 border-t-2 border-slate-700 pt-2 text-xs md:text-sm font-bold text-slate-800">
+            <div className="w-56 border-t-2 border-slate-700 pt-2 text-xs md:text-sm font-bold text-slate-800">
               Instrutor Responsável
             </div>
           </div>
+
+          {/* Espaço reservado para manter o alinhamento de 3 colunas */}
+          <div></div>
         </div>
 
       </div>
