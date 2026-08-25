@@ -7,11 +7,8 @@ export default function Certificado({ aluno, curso, onClose }) {
 
   if (!aluno || !curso) return null;
 
-  // Monta a URL completa para a página de validação
-  const baseUrl = window.location.origin + window.location.pathname;
-  const linkValidacao = `${baseUrl}#/valida`;
-  
-  // Utiliza a API do QuickChart garantindo a codificação correta do Link
+  // Link exato do GitHub especificado
+  const linkValidacao = 'https://github.com/marcio-dev-fullstack/Web-Aluno/blob/main/src/components/Validacao.jsx';
   const qrCodeUrl = `https://quickchart.io/qr?text=${encodeURIComponent(linkValidacao)}&size=200`;
 
   return (
