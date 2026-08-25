@@ -6,6 +6,17 @@ import { cursosIniciais } from '../data/cursosIniciais';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
+// Função utilitária para garantir mínimo de 40h na carga horária
+const padronizarCargasHorarias = (listaCursos) => {
+  return listaCursos.map((curso) => {
+    const horas = parseInt(curso.cargaHoraria, 10) || 0;
+    return {
+      ...curso,
+      cargaHoraria: horas < 40 ? '40h' : curso.cargaHoraria
+    };
+  });
+};
+
 export default function Dashboard() {
   const [abaAtiva, setAbaAtiva] = useState('alunos');
   
@@ -15,10 +26,11 @@ export default function Dashboard() {
   const [whatsappAluno, setWhatsappAluno] = useState('');
   const [cpfAluno, setCpfAluno] = useState('');
 
-  // Cursos (Usa 'cursos_v2' para garantir os 158 cursos novos)
+  // Cursos com aplicação automática do piso de 40h
   const [cursos, setCursos] = useState(() => {
     const salvos = localStorage.getItem('cursos_v2');
-    return salvos ? JSON.parse(salvos) : cursosIniciais;
+    const baseCursos = salvos ? JSON.parse(salvos) : cursosIniciais;
+    return padronizarCargasHorarias(baseCursos);
   });
 
   const [buscaCurso, setBuscaCurso] = useState('');
@@ -47,8 +59,9 @@ export default function Dashboard() {
 
   const handleRestaurarCursosPadrao = () => {
     if (window.confirm('Deseja recarregar a lista padrão de 158 cursos?')) {
-      setCursos(cursosIniciais);
-      localStorage.setItem('cursos_v2', JSON.stringify(cursosIniciais));
+      const cursosPadronizados = padronizarCargasHorarias(cursosIniciais);
+      setCursos(cursosPadronizados);
+      localStorage.setItem('cursos_v2', JSON.stringify(cursosPadronizados));
     }
   };
 
@@ -77,10 +90,15 @@ export default function Dashboard() {
 
   const handleCadastrarCurso = (e) => {
     e.preventDefault();
+    
+    // Garante que o novo curso cadastrado também respeite o mínimo de 40h
+    const horasDigitadas = parseInt(cargaHoraria, 10) || 0;
+    const cargaFormatada = horasDigitadas < 40 ? '40h' : cargaHoraria;
+
     const novoCurso = {
       id: Date.now(),
       nome: nomeCurso,
-      cargaHoraria
+      cargaHoraria: cargaFormatada
     };
 
     const novaListaCursos = [novoCurso, ...cursos];
