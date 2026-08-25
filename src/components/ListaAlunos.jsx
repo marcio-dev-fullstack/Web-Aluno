@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import Certificado from './Certificado';
 
 export default function ListaAlunos() {
   const [alunos, setAlunos] = useState([]);
   const [alunoEditando, setAlunoEditando] = useState(null);
   const [alunoFicha, setAlunoFicha] = useState(null);
+  const [certificadoAtivo, setCertificadoAtivo] = useState(null);
 
   useEffect(() => {
     carregarAlunos();
@@ -42,64 +44,6 @@ export default function ListaAlunos() {
       .map((m) => String(m.cursoId));
 
     return cursos.filter((c) => idsCursosMatriculados.includes(String(c.id)));
-  };
-
-  // Função para gerar layout e acionar a impressão do certificado
-  const handleImprimirCertificado = (aluno, curso) => {
-    const janelaImpressao = window.open('', '', 'width=900,height=650');
-    janelaImpressao.document.write(`
-      <html>
-        <head>
-          <title>Certificado - ${aluno.nome}</title>
-          <style>
-            @page { size: landscape; margin: 0; }
-            body { font-family: 'Arial', sans-serif; margin: 0; padding: 40px; background: #fff; color: #1e293b; }
-            .cert-border { border: 10px solid #1e3a8a; padding: 40px; height: 80vh; display: flex; flex-direction: column; justify-content: space-between; text-align: center; box-shadow: inset 0 0 0 4px #93c5fd; }
-            .header { font-size: 28px; font-weight: bold; color: #1e3a8a; text-transform: uppercase; letter-spacing: 2px; }
-            .sub-header { font-size: 14px; color: #64748b; margin-top: 5px; }
-            .title { font-size: 42px; font-weight: 900; color: #0f172a; margin: 20px 0; text-transform: uppercase; }
-            .content { font-size: 18px; line-height: 1.6; color: #334155; margin: 20px 0; }
-            .name { font-size: 26px; font-weight: bold; color: #2563eb; text-decoration: underline; text-underline-offset: 6px; }
-            .course { font-size: 22px; font-weight: bold; color: #0f172a; }
-            .footer { display: flex; justify-content: space-around; align-items: flex-end; margin-top: 40px; }
-            .signature-line { border-top: 2px solid #64748b; width: 250px; padding-top: 8px; font-size: 14px; font-weight: bold; }
-          </style>
-        </head>
-        <body>
-          <div class="cert-border">
-            <div>
-              <div class="header">Engenharia Academy</div>
-              <div class="sub-header">Plataforma de Capacitação Profissional</div>
-              <div class="title">CERTIFICADO DE CONCLUSÃO</div>
-            </div>
-            
-            <div class="content">
-              Certificamos que o(a) aluno(a) <br><br>
-              <span class="name">${aluno.nome.toUpperCase()}</span><br>
-              CPF: <strong>${aluno.cpf}</strong><br><br>
-              concluiu com êxito o curso de capacitação em <br>
-              <span class="course">${curso.nome}</span><br>
-              com carga horária total de <strong>${curso.cargaHoraria}</strong>.
-            </div>
-
-            <div class="footer">
-              <div>
-                <div class="signature-line">Direção Acadêmica</div>
-              </div>
-              <div>
-                <div class="signature-line">Instrutor Responsável</div>
-              </div>
-            </div>
-          </div>
-        </body>
-      </html>
-    `);
-    janelaImpressao.document.close();
-    janelaImpressao.focus();
-    setTimeout(() => {
-      janelaImpressao.print();
-      janelaImpressao.close();
-    }, 500);
   };
 
   return (
@@ -215,7 +159,7 @@ export default function ListaAlunos() {
                       </div>
                       
                       <button
-                        onClick={() => handleImprimirCertificado(alunoFicha, curso)}
+                        onClick={() => setCertificadoAtivo({ aluno: alunoFicha, curso })}
                         className="bg-blue-600/30 hover:bg-blue-600/50 text-blue-300 border border-blue-500/40 px-3 py-1.5 rounded-lg text-[11px] font-bold transition cursor-pointer shrink-0"
                       >
                         🖨️ Certificado
@@ -310,6 +254,15 @@ export default function ListaAlunos() {
             </form>
           </div>
         </div>
+      )}
+
+      {/* COMPONENTE DO CERTIFICADO */}
+      {certificadoAtivo && (
+        <Certificado
+          aluno={certificadoAtivo.aluno}
+          curso={certificadoAtivo.curso}
+          onClose={() => setCertificadoAtivo(null)}
+        />
       )}
     </div>
   );
